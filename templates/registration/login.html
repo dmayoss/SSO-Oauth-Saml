@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- need to remember the better clear all thing here -->
+<div class="header">&nbsp;</div>
+
+<div class="container h-100">
+  <div class="d-flex justify-content-center h-100">
+    <div class="user_card">
+
+      <div class="d-flex justify-content-center form_container">
+        <form method="POST">
+        {% csrf_token %}
+
+          <div class="input-group mb-3">
+            <input type="text" name="username" class="form-control" value="" placeholder="email">
+          </div>
+          <div class="input-group mb-3">
+            <input type="password" name="password" class="form-control" value="" placeholder="password">
+          </div>
+          <div class="d-flex justify-content-center mt-3 login_container">
+            <button type="submit" name="submit" class="btn btn-primary">Login</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="mt-4">
+        {{ form.non_field_errors }}
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

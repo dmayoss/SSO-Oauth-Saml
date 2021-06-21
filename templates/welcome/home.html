@@ -1,0 +1,15 @@
+{% extends "welcome/base.html" %}
+
+{% block content %}
+<H1>Welcome user</H1>
+
+<p>Welcome to the fledgeling user self-service page.</p>
+<p>Here you will find all useful details about yourself.</p>
+
+{% for user in users %}
+    <h2>{{ user.name }}</h2>
+    <h4>{{ user.email }}</h4>
+
+{% endfor %}
+
+{% endblock content %}
