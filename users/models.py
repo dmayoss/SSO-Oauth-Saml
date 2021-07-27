@@ -7,9 +7,10 @@ from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
     username = None
+    nickname = models.CharField(max_length=64, null=False, blank=True)
     email = models.EmailField(_('email address'), unique=True)
-    department = models.CharField(max_length=128)
-    phone = models.CharField(max_length=32)
+    phone = models.CharField(max_length=32, null=False, blank=True)
+    department = models.ManyToManyField('Department')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -18,3 +19,11 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class Department(models.Model):
+    department = models.CharField(max_length=128)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.department

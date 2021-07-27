@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+<div class="header">&nbsp;</div>
+
+<div class="row">
+    <!-- Iterate over object_list -->
+    {% for object in object_list %}
+    {% if not object.is_superuser %}
+    <!-- Display Objects -->
+    <div class="col-md-4">{{ object.email }}</div>
+    <div class="col-md-4">{{ object.nickname }}</div>
+    <div class="col-md-4">
+      <ul>
+      {% for department in object.department.all %}
+      <li>{{ department }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+
+    <hr/>
+    {% endif %}
+    <!-- If object_list is empty  -->
+    {% empty %}
+    <div class="row">No objects yet.</div>
+    {% endfor %}
+</div>
+
+</div>
+
+{% endblock content %}
