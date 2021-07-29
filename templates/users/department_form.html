@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+<div class="header">&nbsp;</div>
+
+<div>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+  <input type="submit" class="btn btn-primary" value="Update">
+  <a type="button" class="btn btn-default" href="{% url 'home' %}">Cancel</a>
+  </form>
+</div>
+
+{% endblock content %}

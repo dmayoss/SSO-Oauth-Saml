@@ -22,7 +22,7 @@ class CustomUser(AbstractUser):
 
 
 class Department(models.Model):
-    department = models.CharField(max_length=128)
+    department = models.CharField(max_length=128, unique=True)
     description = models.TextField()
 
     def __str__(self):

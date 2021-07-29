@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+<div class="header">&nbsp;</div>
+
+  <!-- Iterate over object_list -->
+  {% for object in object_list %}
+  <div class="row">
+    <!-- Display Objects -->
+    <div class="col-md-3">
+      <p>{{ object.department }}</p>
+    </div>
+    <div class="col-md-3">
+      <p>{{ object.description }}</p>
+    </div>
+    {% if user.is_staff or user.is_superuser %}
+    <div class="col-md-3 text-right">
+      <a type="button" class="btn btn-primary" href="{% url 'dpts-edit' pk=object.pk %}"><span class="glyphicon glyphicon-edit"></span>Edit</a>
+    </div>
+    {% endif %}
+  </div>
+    <!-- If object_list is empty  -->
+    {% empty %}
+    <div class="row">
+      No departments yet.
+      <a href="{% url 'dpts-new' %}"><span class="glyphicon glyphicon-edit"></span>New</a>
+    </div>
+    {% endfor %}
+
+    {% if user.is_staff or user.is_superuser %}
+    <div class="header">&nbsp;</div>
+
+    <div class="row">
+      <div class="col-md-9 text-right">
+        <a type="button" class="btn btn-default" href="{% url 'dpts-new' %}"><span class="glyphicon glyphicon-edit"></span>New</a>
+      </div>
+    </div>
+    {% endif %}
+
+
+</div>
+
+{% endblock content %}

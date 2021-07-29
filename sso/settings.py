@@ -35,6 +35,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'djangosaml2idp',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -145,7 +146,55 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
+# fix me for emails to actually go out
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = str(BASE_DIR.joinpath('sent_emails'))
 
+# this is needed for emails to be usernames
 AUTH_USER_MODEL = "users.CustomUser"
+
+# SAML stuff below
+
+import saml2
+from saml2.saml import NAMEID_FORMAT_EMAILADDRESS, NAMEID_FORMAT_UNSPECIFIED
+from saml2.sigver import get_xmlsec_binary
+
+LOGIN_URL = '/login/'
+BASE_URL = 'http://localhost:8000/idp'  # 9000 or 8000?
+
+SAML_IDP_CONFIG = {
+    'debug' : DEBUG,
+    'xmlsec_binary': get_xmlsec_binary(['/opt/local/bin', '/usr/bin', 'usr/local/bin']),
+    'entityid': '%s/metadata' % BASE_URL,
+    'description': 'Easy IdP',
+
+    'service': {
+        'idp': {
+            'name': 'Easy IdP',
+            'endpoints': {
+                'single_sign_on_service': [
+                    ('%s/sso/post/' % BASE_URL, saml2.BINDING_HTTP_POST),
+                    ('%s/sso/redirect/' % BASE_URL, saml2.BINDING_HTTP_REDIRECT),
+                ],
+                "single_logout_service": [
+                    ("%s/slo/post/" % BASE_URL, saml2.BINDING_HTTP_POST),
+                    ("%s/slo/redirect/"  % BASE_URL, saml2.BINDING_HTTP_REDIRECT)
+                ],
+            },
+            'name_id_format': [NAMEID_FORMAT_EMAILADDRESS, NAMEID_FORMAT_UNSPECIFIED],
+            'sign_response': True,
+            'sign_assertion': True,
+            'want_authn_requests_signed': True,
+        },
+    },
+
+    # Signing
+    'key_file': BASE_DIR / 'certificates/private.key',
+    'cert_file': BASE_DIR / 'certificates/public.cert',
+    # Encryption
+    'encryption_keypairs': [{
+        'key_file': BASE_DIR / 'certificates/private.key',
+        'cert_file': BASE_DIR / 'certificates/public.cert',
+    }],
+    'valid_for': 365 * 24,
+}
