@@ -19,6 +19,13 @@ You need the equivalent of:
   - mysql
   - postgres
   - sqlite3 (db-sqlite3 via pip)
+- DB interface modules (Depending on need/compatibility)
+  - py38-postgresql
+  - py38-sqlite3
+  - py38-pymysql
+  - py38-mysqlclient
+  - py38-mysql-connector-python
+  
 
 ## python packages
 Install these via pip
@@ -26,9 +33,17 @@ Install these via pip
 - django (ymmv on whatever version, I'm just using latest)
 - djangosaml2idp
 - DB packages
-  - pymysql (mysql/mariadb)
-  - db-sqlite3 (sqlite)
+  - pymysql (for example, for mysql/mariadb)
+  - db-sqlite3
 
 And that's about it.
 
-More configuration will follow later.
+# Django Setup
+run migrate
+`python ./manage.py migrate`
+
+create superuser (follow prompts)
+`python ./manage.py createsuperuser`
+
+run server
+`python ./manage.py runserver 0:8000`
