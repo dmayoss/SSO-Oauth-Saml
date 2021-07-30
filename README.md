@@ -14,14 +14,20 @@ You need the equivalent of:
 - rust
 - nginx (or your http server of choice)
 - gunicorn (or uwsgi or similar)
-- mariadb server (mysql works, postgres will work, you don't need any if you don't want to use a DB)
+- a DB backend of some sort
+  - mariadb
+  - mysql
+  - postgres
+  - sqlite3 (db-sqlite3 via pip)
 
 ## python packages
 Install these via pip
 
 - django (ymmv on whatever version, I'm just using latest)
 - djangosaml2idp
-- pymysql (if you're using it)
+- DB packages
+  - pymysql (mysql/mariadb)
+  - db-sqlite3 (sqlite)
 
 And that's about it.
 
