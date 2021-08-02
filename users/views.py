@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
-from users.models import CustomUser, Department
+from users.models import CustomUser, Departments
 
 
 class SuperUserCheck(UserPassesTestMixin):
@@ -44,7 +44,7 @@ class AdminUserView(StaffUserCheck, ListView):
 
 class AdminUserEdit(StaffUserCheck, UpdateView):
     model = CustomUser
-    fields = ['first_name', 'last_name', 'nickname', 'phone', 'department']
+    fields = ['first_name', 'last_name', 'nickname', 'phone', 'departments']
 
     def get_object(self, *args, **kwargs):
         user = get_object_or_404(CustomUser, pk=self.kwargs['pk'])
@@ -55,7 +55,7 @@ class AdminUserEdit(StaffUserCheck, UpdateView):
 
 
 class DepartmentNew(StaffUserCheck, CreateView):
-    model = Department
+    model = Departments
     fields = ['department', 'description']
 
     success_url = reverse_lazy("dpts-view")
@@ -63,11 +63,11 @@ class DepartmentNew(StaffUserCheck, CreateView):
 
 
 class DepartmentView(StaffUserCheck, ListView):
-    model = Department
+    model = Departments
 
 
 class DepartmentEdit(StaffUserCheck, UpdateView):
-    model = Department
+    model = Departments
     fields = ['department', 'description']
 
 

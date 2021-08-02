@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'sso.wsgi.application'
 DATABASES = {
     'default': {
     'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': BASE_DIR / 'db.sqlite3',
+    'NAME': str(BASE_DIR.joinpath('db.sqlite3')),
     }
 }
 
@@ -159,8 +159,13 @@ import saml2
 from saml2.saml import NAMEID_FORMAT_EMAILADDRESS, NAMEID_FORMAT_UNSPECIFIED
 from saml2.sigver import get_xmlsec_binary
 
-LOGIN_URL = '/login/'
-BASE_URL = 'http://localhost:8000/idp'  # 9000 or 8000?
+LOGIN_URL = '/accounts/login/'
+LOGOUT_URL = '/accounts/logout/'
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+BASE_URL = 'http://localhost:8000/idp'  # change this
 
 SAML_IDP_CONFIG = {
     'debug' : DEBUG,
@@ -173,10 +178,12 @@ SAML_IDP_CONFIG = {
             'name': 'Easy IdP',
             'endpoints': {
                 'single_sign_on_service': [
+                    # maybe should not have the following?
                     ('%s/sso/post/' % BASE_URL, saml2.BINDING_HTTP_POST),
                     ('%s/sso/redirect/' % BASE_URL, saml2.BINDING_HTTP_REDIRECT),
                 ],
                 "single_logout_service": [
+                    # maybe should not have the following?
                     ("%s/slo/post/" % BASE_URL, saml2.BINDING_HTTP_POST),
                     ("%s/slo/redirect/"  % BASE_URL, saml2.BINDING_HTTP_REDIRECT)
                 ],
@@ -189,12 +196,30 @@ SAML_IDP_CONFIG = {
     },
 
     # Signing
-    'key_file': BASE_DIR / 'certificates/private.key',
-    'cert_file': BASE_DIR / 'certificates/public.cert',
+    'key_file': str(BASE_DIR.joinpath('certificates/private.key')),
+    'cert_file':str(BASE_DIR.joinpath('certificates/public.cert')),
     # Encryption
     'encryption_keypairs': [{
-        'key_file': BASE_DIR / 'certificates/private.key',
-        'cert_file': BASE_DIR / 'certificates/public.cert',
+        'key_file': str(BASE_DIR.joinpath('certificates/private.key')),
+        'cert_file': str(BASE_DIR.joinpath('certificates/public.cert')),
     }],
     'valid_for': 365 * 24,
 }
+
+SAML_AUTHN_SIGN_ALG = saml2.xmldsig.SIG_RSA_SHA256
+SAML_AUTHN_DIGEST_ALG = saml2.xmldsig.DIGEST_SHA256
+
+# not sure if I need the following, or if it should be 0
+SAML_IDP_FALLBACK_EXPIRATION_DAYS = 30
+
+# this is probably only for SP
+SAML_IDP_SP_FIELD_DEFAULT_PROCESSOR = 'djangosaml2idp.processors.BaseProcessor'
+SAML_IDP_SP_FIELD_DEFAULT_ATTRIBUTE_MAPPING = {
+    "username": "username",  # this is just the email before @
+    "usergroups": "usergroups",  # this will need tweaks, I'm sure
+    "email": "email",
+    "first_name": "first_name",
+    "last_name": "last_name",
+    "is_staff": "is_staff",
+    "is_superuser": "is_superuser"
+    }

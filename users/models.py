@@ -6,14 +6,31 @@ from .managers import CustomUserManager
 
 
 class CustomUser(AbstractUser):
-    username = None
     nickname = models.CharField(max_length=64, null=False, blank=True)
     email = models.EmailField(_('email address'), unique=True)
     phone = models.CharField(max_length=32, null=False, blank=True)
-    department = models.ManyToManyField('Department')
+    departments = models.ManyToManyField('Departments')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    @property
+    def username(self):
+        try:
+            return self.email[:self.email.find('@')]
+        except:
+            return ""
+
+    @property
+    def usergroups(self):
+        try:
+            groups = list()
+            for department in self.departments.all():
+                groups.append(department.department)
+            return groups
+        except:
+            return list()
+
 
     objects = CustomUserManager()
 
@@ -21,7 +38,7 @@ class CustomUser(AbstractUser):
         return self.email
 
 
-class Department(models.Model):
+class Departments(models.Model):
     department = models.CharField(max_length=128, unique=True)
     description = models.TextField()
 
