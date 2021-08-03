@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import ugettext_lazy as _
+from phonenumber_field.modelfields import PhoneNumberField
 
 from .managers import CustomUserManager
 
@@ -8,7 +9,7 @@ from .managers import CustomUserManager
 class CustomUser(AbstractUser):
     nickname = models.CharField(max_length=64, null=False, blank=True)
     email = models.EmailField(_('email address'), unique=True)
-    phone = models.CharField(max_length=32, null=False, blank=True)
+    phone = PhoneNumberField()
     departments = models.ManyToManyField('Departments')
 
     USERNAME_FIELD = 'email'
@@ -30,7 +31,6 @@ class CustomUser(AbstractUser):
             return groups
         except:
             return list()
-
 
     objects = CustomUserManager()
 

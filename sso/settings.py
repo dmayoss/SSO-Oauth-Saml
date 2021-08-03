@@ -41,6 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
+    'two_factor',
+    'otp_yubikey',  # apparently needed even if not used. Joy.
+    'phonenumber_field',  # have it, may as well use it now
     'users',
 ]
 
@@ -52,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_otp.middleware.OTPMiddleware',
 ]
 
 ROOT_URLCONF = 'sso.urls'
@@ -117,33 +124,33 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-
 STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = [
     'sso.auth.EmailBackend',
     ]
 
+LOGIN_URL = 'two_factor:login'
+# LOGIN_URL = '/accounts/login/'
+LOGOUT_URL = '/accounts/logout/'
+
+# this one is optional
 LOGIN_REDIRECT_URL = 'home'
+# LOGIN_REDIRECT_URL = 'two_factor:profile'
+
 LOGOUT_REDIRECT_URL = 'home'
 
 # fix me for emails to actually go out
@@ -154,25 +161,17 @@ EMAIL_FILE_PATH = str(BASE_DIR.joinpath('sent_emails'))
 AUTH_USER_MODEL = "users.CustomUser"
 
 # SAML stuff below
-
 import saml2
 from saml2.saml import NAMEID_FORMAT_EMAILADDRESS, NAMEID_FORMAT_UNSPECIFIED
 from saml2.sigver import get_xmlsec_binary
-
-LOGIN_URL = '/accounts/login/'
-LOGOUT_URL = '/accounts/logout/'
-
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
 
 BASE_URL = 'http://localhost:8000/idp'  # change this
 
 SAML_IDP_CONFIG = {
     'debug' : DEBUG,
-    'xmlsec_binary': get_xmlsec_binary(['/opt/local/bin', '/usr/bin', 'usr/local/bin']),
+    'xmlsec_binary': get_xmlsec_binary(['/usr/local/bin/xmlsec1', '/usr/bin', 'usr/local/bin']),
     'entityid': '%s/metadata' % BASE_URL,
     'description': 'Easy IdP',
-
     'service': {
         'idp': {
             'name': 'Easy IdP',
@@ -194,10 +193,9 @@ SAML_IDP_CONFIG = {
             'want_authn_requests_signed': True,
         },
     },
-
     # Signing
     'key_file': str(BASE_DIR.joinpath('certificates/private.key')),
-    'cert_file':str(BASE_DIR.joinpath('certificates/public.cert')),
+    'cert_file': str(BASE_DIR.joinpath('certificates/public.cert')),
     # Encryption
     'encryption_keypairs': [{
         'key_file': str(BASE_DIR.joinpath('certificates/private.key')),
@@ -223,3 +221,23 @@ SAML_IDP_SP_FIELD_DEFAULT_ATTRIBUTE_MAPPING = {
     "is_staff": "is_staff",
     "is_superuser": "is_superuser"
     }
+
+# 2FA malarkey
+TWO_FACTOR_PATCH_ADMIN = True
+
+# TWO_FACTOR_CALL_GATEWAY = 'two_factor.gateways.twilio.gateway.Twilio'
+# TWO_FACTOR_CALL_GATEWAY = 'two_factor.gateways.fake.Fake'
+TWO_FACTOR_CALL_GATEWAY = None
+
+TWO_FACTOR_SMS_GATEWAY = None
+
+TWO_FACTOR_TOTP_DIGITS = 6  # default is 6
+TWO_FACTOR_LOGIN_TIMEOUT = 600  # default is 600
+
+PHONENUMBER_DEFAULT_REGION = None
+
+TWO_FACTOR_REMEMBER_COOKIE_AGE = 36500  # default is 0, not active
+
+# phonenumber stuff (using phonenumberslite)
+# PHONENUMBER_DB_FORMAT = 'E164', 'INTERNATIONAL', 'NATIONAL' or 'RFC3966'
+PHONENUMBER_DB_FORMAT = 'E164'

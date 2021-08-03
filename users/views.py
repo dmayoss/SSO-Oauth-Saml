@@ -72,7 +72,7 @@ class DepartmentEdit(StaffUserCheck, UpdateView):
 
 
     def get_object(self, *args, **kwargs):
-        dpt = get_object_or_404(Department, pk=self.kwargs['pk'])
+        dpt = get_object_or_404(Departments, pk=self.kwargs['pk'])
         return dpt
 
     def get_success_url(self, *args, **kwargs):

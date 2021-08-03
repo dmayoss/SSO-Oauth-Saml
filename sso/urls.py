@@ -16,10 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import TemplateView
+from two_factor.urls import urlpatterns as tf_urls
 
 from users.views import DepartmentView, DepartmentEdit, DepartmentNew
 
 urlpatterns = [
+    path('', include(tf_urls)),
     path('idp/', include('djangosaml2idp.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
