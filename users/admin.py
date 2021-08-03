@@ -12,13 +12,14 @@ class CustomUserAdmin(UserAdmin):
     )
 
     fieldsets = (
-        (None, {"fields": (('email', 'password', 'first_name', 'last_name',)),}),
+        (None, {"fields": (('email', 'password',)),}),
+        (None, {"fields": (('first_name', 'last_name', 'nickname')),}),
         (None, {"fields": (('departments', 'phone',)),}),
         (None, {"fields": (('groups', 'user_permissions', 'is_superuser', 'is_staff', 'is_active', 'date_joined', 'last_login')),}),
     )
 
-    search_fields = ['email', 'first_name', 'last_name']
-    list_display = ['email', 'username', 'first_name', 'last_name']
+    search_fields = ['email', 'first_name', 'last_name', 'nickname']
+    list_display = ['email', 'username', 'first_name', 'last_name', 'nickname']
     ordering = [ 'email', ]
 
 

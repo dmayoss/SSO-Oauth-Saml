@@ -11,7 +11,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- FA fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" type="text/css" rel="stylesheet">
 
     <title>Welcome to User Self-Service</title>
   </head>
@@ -38,11 +41,14 @@
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <!-- <div class="dropdown-divider"></div> -->
                 <a class="dropdown-item" href="{% url 'password_reset' %}">Password Reset</a>
+                <a class="dropdown-item" href="{% url 'session-list-view' %}">View Sessions</a>
                 {% if user.is_staff %}
+                <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{% url 'users-view' %}">View/Edit Users</a>
                 <a class="dropdown-item" href="{% url 'dpts-view' %}">View/Edit Departments</a>
                 {% endif %}
                 {% if user.is_superuser %}
+                <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a>
                 {% endif %}
               </div>
@@ -53,14 +59,29 @@
 
             {% if user.is_authenticated %}
             <li class="nav-item">
-              <button class="btn btn-disabled">{{ user.email }}</button>
+              <button class="btn btn-dark mr-1" title="{{ user.get_full_name }}">
+                <span class="fa fa-fw fa-user"></span>
+                {{ user.email }}
+              </button>
             </li>
             <li class="nav-item">
-              <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
+              {% if user.is_verified %}
+                <a type="button" class="btn btn-dark mr-1" title="2FA Active" href="{% url 'two_factor:profile' %}">
+                  <span class="fa fa-fw fa-lock" title="2FA Active"></span>
+                </a>
+              {% else %}
+                <a type="button" class="btn btn-dark mr-1" title="2FA Not Active" href="{% url 'two_factor:login' %}">
+                  <span class="fa fa-fw fa-unlock"></span>
+                </a>
+              {% endif %}
+            </li>
+
+            <li class="nav-item">
+              <a class="btn btn-primary mr-1" href="{% url 'logout' %}">Logout</a>
             </li>
             {% else %}
             <li class="nav-item">
-              <a class="btn btn-primary" href="{% url 'login' %}">Login</a> / <a class="btn btn-primary" href="{% url 'signup' %}">Signup</a>
+              <a class="btn btn-primary mr-1" href="{% url 'login' %}">Login</a> / <a class="btn btn-primary" href="{% url 'signup' %}">Signup</a>
             </li>
             {% endif %}
           </ul>

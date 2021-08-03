@@ -30,6 +30,8 @@ ALLOWED_HOSTS = [
     '*',
     ]
 
+# silence this warning, for django user sessions
+SILENCED_SYSTEM_CHECKS = ["admin.E410",]
 
 # Application definition
 
@@ -38,7 +40,8 @@ INSTALLED_APPS = [
     'djangosaml2idp',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    # 'django.contrib.sessions',
+    'user_sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_otp',
@@ -46,13 +49,14 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_totp',
     'two_factor',
     'otp_yubikey',  # apparently needed even if not used. Joy.
-    'phonenumber_field',  # have it, may as well use it now
+    'phonenumber_field',  # have it, may as well use it.
     'users',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
+    'user_sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -60,6 +64,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_otp.middleware.OTPMiddleware',
 ]
+
+# both sessions changes above, and this, are for django-user-sessions
+SESSION_ENGINE = 'user_sessions.backends.db'
 
 ROOT_URLCONF = 'sso.urls'
 
