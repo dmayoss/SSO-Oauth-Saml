@@ -14,6 +14,7 @@ You need the equivalent of:
 - rust
 - nginx (or your http server of choice)
 - gunicorn (or uwsgi or similar)
+  - it's actually better to install this via pip if using a virtualenv
 - a DB backend of some sort
   - mariadb
   - mysql

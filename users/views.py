@@ -1,10 +1,11 @@
-from django.contrib.auth.forms import UserCreationForm
+# from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from users.models import CustomUser, Departments
+from users.forms import SignUpForm
 
 
 class SuperUserCheck(UserPassesTestMixin):
@@ -18,7 +19,8 @@ class StaffUserCheck(UserPassesTestMixin):
 
 
 class SignUpView(CreateView):
-    form_class = UserCreationForm
+    # form_class = UserCreationForm
+    form_class = SignUpForm
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
 
@@ -69,7 +71,6 @@ class DepartmentView(StaffUserCheck, ListView):
 class DepartmentEdit(StaffUserCheck, UpdateView):
     model = Departments
     fields = ['department', 'description']
-
 
     def get_object(self, *args, **kwargs):
         dpt = get_object_or_404(Departments, pk=self.kwargs['pk'])
