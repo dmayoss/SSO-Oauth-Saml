@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'user_sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 2FA / OTP x6
     'django_otp',
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
@@ -62,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 2FA / OTP
     'django_otp.middleware.OTPMiddleware',
 ]
 

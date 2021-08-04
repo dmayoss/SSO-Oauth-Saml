@@ -39,7 +39,6 @@
               </a>
 
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <!-- <div class="dropdown-divider"></div> -->
                 <a class="dropdown-item" href="{% url 'password_reset' %}">Password Reset</a>
                 <a class="dropdown-item" href="{% url 'session-list-view' %}">View Sessions</a>
                 {% if user.is_staff %}
@@ -70,9 +69,15 @@
                   <span class="fa fa-fw fa-lock" title="2FA Active"></span>
                 </a>
               {% else %}
-                <a type="button" class="btn btn-dark mr-1" title="2FA Not Active" href="{% url 'two_factor:login' %}">
+                {% if user.default_device %}
+                  <a type="button" class="btn btn-dark mr-1" title="2FA Not Active" href="{% url 'two_factor:login' %}">
                   <span class="fa fa-fw fa-unlock"></span>
-                </a>
+                  </a>
+                {% else %}
+                  <a type="button" class="btn btn-dark mr-1" title="2FA Not Active" href="{% url 'two_factor:setup' %}">
+                  <span class="fa fa-fw fa-exclamation-circle"></span>
+                  </a>
+                {% endif %}
               {% endif %}
             </li>
 
