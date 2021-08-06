@@ -58,10 +58,9 @@
 
             {% if user.is_authenticated %}
             <li class="nav-item">
-              <button class="btn btn-dark mr-1" title="{{ user.get_full_name }}">
+              <a class="btn btn-dark mr-1" title="{{ user.get_full_name }}" href="{% url 'edit-user-profile' %}">{{ user.email }}
                 <span class="fa fa-fw fa-user"></span>
-                {{ user.email }}
-              </button>
+              </a>
             </li>
             <li class="nav-item">
               {% if user.is_verified %}
