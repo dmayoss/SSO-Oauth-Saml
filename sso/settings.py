@@ -90,27 +90,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sso.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': str(BASE_DIR.joinpath('db.sqlite3')),
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'sso',
-#        'USER': 'username',
-#        'PASSWORD': 'password',
-#        'HOST': 'localhost',
-#        'PORT': '',
-#    }
-#}
+#     'ENGINE': 'django.db.backends.sqlite3',
+#     'NAME': str(BASE_DIR.joinpath('db.sqlite3')),
+#     }
+# }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ssomaster',
+        'USER': 'ssomaster',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

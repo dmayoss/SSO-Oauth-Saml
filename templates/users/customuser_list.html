@@ -6,6 +6,8 @@
 
 <div class="header">&nbsp;</div>
 
+<hr/>
+
   <!-- Iterate over object_list -->
   {% for object in object_list %}
   <div class="row">
@@ -18,7 +20,7 @@
     <div class="col-md-2">Staff: {{ object.is_staff }}</div>
     <div class="col-md-3">Departments:
       <ul>
-      {% for department in object.department.all %}
+      {% for department in object.departments.all %}
       <li>{{ department }}</li>
       {% endfor %}
       </ul>
@@ -29,8 +31,8 @@
     </div>
     {% endif %}
 
-    <hr/>
   </div>
+  <hr/>
     <!-- If object_list is empty  -->
     {% empty %}
     <div class="row">No objects yet.</div>

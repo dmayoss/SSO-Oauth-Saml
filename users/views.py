@@ -2,6 +2,7 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
+from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from users.models import CustomUser, Departments
@@ -16,6 +17,10 @@ class SuperUserCheck(UserPassesTestMixin):
 class StaffUserCheck(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_staff
+
+
+class SignUpClosed(TemplateView):
+    template_name = 'registration/registration_closed.html'
 
 
 class SignUpView(CreateView):

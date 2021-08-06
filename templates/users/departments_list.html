@@ -5,6 +5,7 @@
 <div class="container">
 
 <div class="header">&nbsp;</div>
+<hr/>
 
   <!-- Iterate over object_list -->
   {% for object in object_list %}
@@ -32,7 +33,7 @@
 
     {% if user.is_staff or user.is_superuser %}
     <div class="header">&nbsp;</div>
-
+    <hr/>
     <div class="row">
       <div class="col-md-9 text-right">
         <a type="button" class="btn btn-primary" href="{% url 'dpts-new' %}"><span class="glyphicon glyphicon-edit"></span>New</a>
@@ -40,7 +41,7 @@
     </div>
     {% endif %}
 
-
+<hr/>
 </div>
 
 {% endblock content %}

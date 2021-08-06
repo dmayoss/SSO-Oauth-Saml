@@ -9,51 +9,48 @@
 
 {% if user.is_authenticated %}
 <div class="row">
-  <H4>Welcome {{ user.get_full_name }}</H4>
+  <div class="col-md-12 text-center">
+  <H4>Welcome, {{ user.get_full_name }}</H4>
+  </div>
 </div>
 
-<div class="row">
-  <p>Welcome to the fledgeling user self-service page.</p>
-</div>
-<div class="row">
-  <p>Here you will find all useful details about yourself.</p>
-</div>
-
-<div class="header">&nbsp;</div>
+<div class="header"><hr/></div>
 
 <div class="row">
-  <div class="col-md-8">
-    <span class="text-left center"><h4>User Details</h4></span>
-
+  <div class="col-md-6">
+    <span class="text-left"><h4>User Details</h4></span>
+    <hr/>
     <div class="row">
-     <div class="col-md-3"><p class="text-left font-weight-bold">Full Name</p></div>
-     <div class="col-md-9"><p class="text-left">{{ user.get_full_name }}</p></div> <!-- {{ user.first_name }} {{ user.last_name }} -->
+     <div class="col-md-4"><p class="font-weight-bold">Full Name</p></div>
+     <div class="col-md-6"><p>{{ user.get_full_name }}</p></div>
     </div>
 
     <div class="row">
-       <div class="col-md-3"><p class="text-left font-weight-bold">Display Name</p></div>
-       <div class="col-md-9"><p class="text-left">{{ user.nickname }}</p></div>
+       <div class="col-md-4"><p class="font-weight-bold">Display Name</p></div>
+       <div class="col-md-6"><p">{{ user.nickname }}</p></div>
     </div>
 
     <div class="row">
-       <div class="col-md-3"><p class="text-left font-weight-bold">Email</p></div>
-       <div class="col-md-9"><p class="text-left">{{ user.email }}</p></div>
+       <div class="col-md-4"><p class="font-weight-bold">Email</p></div>
+       <div class="col-md-6"><p>{{ user.email }}</p></div>
     </div>
 
     <div class="row">
-       <div class="col-md-3"><p class="text-left font-weight-bold">Phone</p></div>
-       <div class="col-md-9"><p class="text-left">{{ user.phone }}</p></div>
+       <div class="col-md-4"><p class="font-weight-bold">Phone</p></div>
+       <div class="col-md-6"><p>{{ user.phone }}</p></div>
     </div>
 
     <div class="row">
-      <div class="col-md-12 text-right">
+      <div class="col-md-4">&nbsp;</div>
+      <div class="col-md-6 text-left">
         <a class="btn btn-primary" href="{% url 'edit-user-profile' %}">Edit</a>
       </div>
     </div>
   </div>
 
   <div class="col-md-4">
-    <span class="text-left center"><h4>Group Membership</h4></span>
+    <h4>Group Membership</h4>
+    <hr/>
     <div class="row">
       <div class="col-md-6">
         <ul>
@@ -67,14 +64,14 @@
 </div>
 
 {% else %}
-
+<hr>
 <div class="row">
  <div class="col-md-6">
    <p>You are not logged in.</p>
-   <p>Please, <a class="btn btn-primary" href="{% url 'login' %}">Log In</a> or <a class="btn btn-primary" href="{% url 'signup' %}">Sign Up</a></p>
+   <p>Please, <a class="btn btn-primary" href="{% url 'login' %}">Log In</a></p>
  </div>
 </div>
-
+<hr>
 {% endif %}
 
 </div>

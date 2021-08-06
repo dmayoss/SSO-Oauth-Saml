@@ -50,6 +50,13 @@ And that's about it.
 **Note**: You may need more packages if my list for things like database access isn't what it should be.
 
 # Django Setup
+## make missing directories
+You need some SSL certs for SAML to work.
+`mkdir certificates`
+
+Oh, and make those certs
+`openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout server.key -out server.crt`
+
 ## check your settings
 You'll need to make sure the path to `xmlsec1` is set properly, you'll want to set your secrets properly
 and doubtless you'll have different database setups than me. Check all the things.
