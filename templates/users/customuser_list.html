@@ -11,31 +11,122 @@
   <!-- Iterate over object_list -->
   {% for object in object_list %}
   <div class="row">
-    <!-- Display Objects -->
-    <div class="col-md-3">
-      <p>{{ object.email }}</p>
-      <p>{{ object.get_full_name }}
-      <p>{{ object.nickname }}</p>
-    </div>
-    <div class="col-md-2">Staff: {{ object.is_staff }}</div>
-    <div class="col-md-3">Departments:
-      <ul>
-      {% for department in object.departments.all %}
-      <li>{{ department }}</li>
-      {% endfor %}
-      </ul>
-    </div>
-    {% if user.is_staff or user.is_superuser %}
-    <div class="col-md-3">
-      <a type="button" class="btn btn-primary" href="{% url 'users-edit' pk=object.pk %}"><span class="glyphicon glyphicon-edit"></span>Edit</a>
-    </div>
-    {% endif %}
 
+    <!-- left side of top -->
+    <div class="col-md-6">
+      <div>
+        <h4>{% if object.get_full_name %}{{ object.get_full_name }}{% else %}{{ object.email }}{% endif %}</h4>
+      </div>
+
+      <hr/>
+
+      <div class="row">
+          <div class="col-md-6">First Name</div>
+          <div class="col-md-6">{{ object.first_name }}</div>
+      </div>
+
+      <div class="row">
+          <div class="col-md-6">Last Name</div>
+          <div class="col-md-6">{{ object.last_name }}</div>
+      </div>
+
+      <div class="row">
+          <div class="col-md-6">Phone</div>
+          <div class="col-md-6">{{ object.phone }}</div>
+      </div>
+
+      <div class="row">
+          <div class="col-md-6">Nick- or Display Name</div>
+          <div class="col-md-6">{{ object.nickname }}</div>
+      </div>
+
+    </div>
+
+    <!-- middle  -->
+    <div class="col-md-6">
+      <h4>
+        Unix Login Details
+      </h4>
+
+      <hr/>
+
+      <div class="row">
+          <div class="col-md-6">Unix Login Permitted</div>
+          <div class="col-md-6">
+          {% if object.unixlogin %}
+            <span class="badge bg-success"><i class="bi bi-hand-thumbs-up"> Active</i></span>
+          {% else %}
+            <span class="badge bg-warning"><i class="bi bi-hand-thumbs-down"> Inactive</i></span>
+          {% endif %}
+          </div>
+      </div>
+
+      <div class="row">
+          <div class="col-md-6">Unix Login Name</div>
+          <div class="col-md-6">{{ object.unixname }}</div>
+      </div>
+
+      <div class="row">
+          <div class="col-md-6">Unix Home Directory</div>
+          <div class="col-md-6">{{ object.homedir }}</div>
+      </div>
+    </div>
+
+    <div style="clear:both;">&nbsp</div>
+
+    <div class="col-md-6">
+      <h4>
+        Departments
+      </h4>
+
+      <hr/>
+      <!-- RS of top -->
+
+      <div class="col-md-12">
+        <ul>
+        {% for department in object.departments.all %}
+        <li>{{ department }}</li>
+        {% empty %}
+        <li>Not in any departments yet</li>
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <h4>
+        Unix Groups
+      </h4>
+
+      <hr/>
+
+      <div class="col-md-12">
+        <ul>
+        {% for group in object.unixgroups.all %}
+        <li>{{ group }}</li>
+        {% empty %}
+        <li>Not in any unix groups yet</li>
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+
+    </div>
   </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="text-right">
+        <a type="button" class="btn btn-primary" href="{% url 'staff-users-edit' pk=object.pk %}"><span class="bi bi-pencil"></span> Edit</a>
+      </div>
+    </div>
+  </div>
+
   <hr/>
     <!-- If object_list is empty  -->
     {% empty %}
-    <div class="row">No objects yet.</div>
+    <div class="row">No Users yet.</div>
     {% endfor %}
 
 </div>

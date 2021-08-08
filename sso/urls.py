@@ -18,17 +18,13 @@ from django.urls import path, include
 from django.views.generic.base import TemplateView
 from two_factor.urls import urlpatterns as tf_urls
 
-from users.views import DepartmentView, DepartmentEdit, DepartmentNew
-
 urlpatterns = [
-    path('', include('user_sessions.urls', 'user_sessions')),
-    path('', include(tf_urls)),
-    path('idp/', include('djangosaml2idp.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('idp/', include('djangosaml2idp.urls')),
     path('users/', include('users.urls')),
-    path('departments/', DepartmentView.as_view(), name="dpts-view"),
-    path('departments/<pk>/', DepartmentEdit.as_view(), name="dpts-edit"),
-    path('departments/new', DepartmentNew.as_view(), name="dpts-new"),
+    path('staff/', include('staff.urls')),
+    path('', include('user_sessions.urls', 'user_sessions')),
+    path('', include(tf_urls)),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
 ]

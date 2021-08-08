@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+<div class="header">&nbsp;</div>
+<hr/>
+
+  {% for object in object_list %}
+  <div class="row">
+    <div class="col-md-3">
+      <p class="fs-5"><span class="badge bg-info"><i class="bi bi-file-earmark-medical" title="Created"> {{ object.created }}</i></span></p>
+      <p class="fs-5"><span class="badge bg-info"><i class="bi bi-file-earmark-plus" title="Updated"> {{ object.updated }}</i></span></p>
+      <p>
+        <form action="{% url 'user-key-use' pk=object.pk %}" method="post">
+        {% csrf_token %}
+        {% if object.active %}
+          <button type="submit" class="btn btn-success" title="Active"><i class="bi bi-hand-thumbs-up" onclick="{% url 'user-keys-act' pk=object.pk % }"></i></button>
+        {% else %}
+          <button type="submit" class="btn btn-warning" title="Inactive"><i class="bi bi-hand-thumbs-down"></i></button>
+        {% endif %}
+        </form>
+      </p>
+    </div>
+    <div class="col-md-6">
+      <p>{{ object.key_data }}</p>
+    </div>
+    <div class="col-md-3 text-right">
+      <p><a type="button" class="btn btn-primary" href="{% url 'user-keys-edit' pk=object.pk %}" title="Edit"><span class="bi bi-pencil"> Edit</span></a></p>
+        <form action="{% url 'user-key-del' pk=object.pk %}" method="post">
+          {% csrf_token %}
+          <p><button class="btn btn-danger" onclick="return confirm('Are you sure?');" title="Delete"><span class="bi bi-trash"> Delete</span></button></p>
+        </form>
+    </div>
+  </div>
+  <hr/>
+    <!-- If list is empty  -->
+    {% empty %}
+    <div class="row">
+      No objects yet.
+    </div>
+    {% endfor %}
+    <div class="row">
+      <div class="col-md-12 text-right">
+        <a type="button" class="btn btn-secondary" href="{% url 'home' %}"><span class="bi bi-house"> Home</span></a>
+        <a type="button" class="btn btn-success" href="{% url 'user-keys-new' %}"><span class="bi bi-pencil"> New</span></a>
+      </div>
+    </div>
+</div>
+
+{% endblock content %}

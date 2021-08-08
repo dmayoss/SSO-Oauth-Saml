@@ -10,68 +10,199 @@
 {% if user.is_authenticated %}
 <div class="row">
   <div class="col-md-12 text-center">
-  <H4>Welcome, {{ user.get_full_name }}</H4>
+    <H4>Welcome, {{ user.get_full_name }}</H4>
   </div>
 </div>
 
-<div class="header"><hr/></div>
+<hr/>
+
+<!-- user edit form -->
+<form method="POST" action="{% url 'user-edit' pk=user.pk %}">
+{% csrf_token %}
 
 <div class="row">
-  <div class="col-md-6">
-    <h4>User Details</h4>
+  <!-- left side of top -->
+  <div class="col-md-4">
+    <div>
+      <h4>User Details for {% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.email }}{% endif %}</h4>
+    </div>
+
     <hr/>
-    <div class="row">
-     <div class="col-md-4"><p class="font-weight-bold">Full Name</p></div>
-     <div class="col-md-6"><p>{{ user.get_full_name }}</p></div>
+
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="id_first_name">First Name</label>
+        <input type="text" class="form-control" id="id_first_name" placeholder="First Name" value="{{ user.first_name }}" maxlength="150" name="first_name">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="id_last_name">Last Name</label>
+        <input type="text" class="form-control" id="id_last_name" placeholder="Last Name" value="{{ user.last_name }}" maxlength="150" name="last_name">
+      </div>
     </div>
 
-    <div class="row">
-       <div class="col-md-4"><p class="font-weight-bold">Display Name</p></div>
-       <div class="col-md-6"><p">{{ user.nickname }}</p></div>
+    <div class="form-row">
+      <div class="form-group col-md-12">
+        <label for="id_phone">Phone Number</label>
+        <input type="text" class="form-control" id="id_phone" placeholder="+1234567890" value="{{ user.phone }}" maxlength="32" name="phone">
+      </div>
     </div>
 
-    <div class="row">
-       <div class="col-md-4"><p class="font-weight-bold">Email</p></div>
-       <div class="col-md-6"><p>{{ user.email }}</p></div>
+    <div class="form-row">
+      <div class="form-group col-md-12">
+        <label for="id_nickname">Nick- or Displayname</label>
+        <input type="text" class="form-control" id="id_nickname" placeholder="Nick- or Display Name" value="{{ user.nickname }}" maxlength="128" name="nickname">
+      </div>
     </div>
-
-    <div class="row">
-       <div class="col-md-4"><p class="font-weight-bold">Phone</p></div>
-       <div class="col-md-6"><p>{{ user.phone }}</p></div>
-    </div>
-
   </div>
 
   <div class="col-md-4">
-    <h4>Group Membership</h4>
+    <h4>
+      Unix Login Details
+      {% if user.unixlogin %}
+        <span class="badge bg-info" title="Unix Login Enabled"><i class="bi bi-hand-thumbs-up"></i></span>
+      {% else %}
+        <span class="badge bg-warning" title="Unix Login Disabled, Contact Admin"><i class="bi bi-hand-thumbs-down"></i></span>
+      {% endif %}
+    </h4>
+
     <hr/>
-    <div class="row">
-      <div class="col-md-6">
-        <ul>
-          {% for department in user.departments.all %}
-            <li> {{ department }}</li>
-          {% endfor %}
-        </ul>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="id_unixname">Unix Login Name</label>
+        <input type="text" class="form-control" id="id_unixname" placeholder="unix login name" value="{{ user.unixname }}" maxlength="32" name="unixname">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="id_homedir">Unix Home Directory</label>
+        <input type="text" class="form-control" id="id_homedir" placeholder="unix Home Directory Path" value="{{ user.homedir }}" maxlength="32" name="homedir">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="id_shell">Unix Shell Name</label>
+        <input type="text" class="form-control" id="id_shell" placeholder="unix login name" value="{{ user.shell }}" maxlength="32" name="shell">
       </div>
     </div>
   </div>
+
+  <!-- RS of top -->
+  <div class="col-md-4">
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Department Membership</h4>
+        <hr/>
+        <div class="row">
+          <div class="col-md-12">
+            <ul>
+              {% for department in user.departments.all %}
+                <li> {{ department }}</li>
+                {% empty %}
+                <li>Not in any departments yet</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Unix Group Membership</h4>
+        <hr/>
+        <div class="row">
+          <div class="col-md-12">
+            <ul>
+              {% for group in user.unixgroup.all %}
+                <li> {{ group }}</li>
+                {% empty %}
+                <li>Not in any unix groups yet</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="text-right">
+      <button class="btn btn-primary" type="submit" class="btn btn-primary right"><span class="bi bi-pencil"> Save Changes</span></button>
+    </div>
+  </div>
+</div>
+
 <hr/>
+
+  {% if form.errors %}
+  <div>
+      {% for field in form %}
+          {% for error in field.errors %}
+             <div class="alert alert-danger">
+                  <strong>{{ field.label }} : {{ error|escape }}</strong>
+             </div>
+          {% endfor %}
+      {% endfor %}
+      <hr/>
+   </div>
+   {% endif %}
+
+</form>
+
+
 <div class="row">
   <div class="col-md-12">
     <h4>Current SSH Key(s)</h4>
-    <hr/>
-    {% for key in user.userkeys_set.all %}
-    <div class="row">
-      <div class="col-md-8">{{ key.key_data }}</div>
-      <div class="col-md-4">
-          <p><b>Created</b><br>{{ key.created }}</p>
-          <p><b>Updated</b><br>{{ key.updated }}</p>
-          <p>Key is <b>{% if key.active %}Active{% else %}Disabled{% endif %}</b></p>
-      </div>
-    </div>
-    <hr/>
-    {% endfor %}
+  </div>
+</div>
+
+{% for key in user.userkeys_set.all %}
+<div class="row">
+  <div class="col-md-3">
+    <p class="fs-5"><span class="badge bg-info"><i class="bi bi-file-earmark-medical" title="Created"> {{ key.created }}</i></span></p>
+    <p class="fs-5"><span class="badge bg-info"><i class="bi bi-file-earmark-plus" title="Updated"> {{ key.updated }}</i></span></p>
+      <form action="{% url 'user-key-use' pk=key.pk %}" method="post">
+      {% csrf_token %}
+      {% if key.active %}
+        <p><button type="submit" class="btn btn-success" title="Active"><i class="bi bi-hand-thumbs-up" onclick="{% url 'user-keys-act' pk=key.pk % }"></i></button></p>
+      {% else %}
+        <p><button type="submit" class="btn btn-warning" title="Inactive"><i class="bi bi-hand-thumbs-down"></i></button></p>
+      {% endif %}
+      </form>
+  </div>
+  <div class="col-md-6">
+    <p>{{ key.key_data }}</p>
+  </div>
+  <div class="col-md-3 text-right">
+    <p><a type="button" class="btn btn-primary" href="{% url 'user-keys-edit' pk=key.pk %}" title="Edit"><span class="bi bi-pencil"> Edit</span></a></p>
+      <form action="{% url 'user-key-del' pk=key.pk %}" method="post">
+        {% csrf_token %}
+        <p><button class="btn btn-danger" onclick="return confirm('Are you sure?');" title="Delete"><span class="bi bi-trash"> Delete</span></button></p>
+      </form>
+  </div>
+</div>
+
+{% empty %}
+<div class="row">
+  <div class="col-md-3">
+    No SSH keys yet.
+  </div>
+</div>
+{% endfor %}
+
+<hr/>
+
+<div class="row">
+  <div class="col-md-12 text-right">
+    <a type="button" class="btn btn-success" href="{% url 'user-keys-new' %}"><span class="bi bi-pencil"> New</span></a>
+  </div>
 </div>
 
 {% else %}

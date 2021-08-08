@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'otp_yubikey',  # apparently needed even if not used. Joy.
     'phonenumber_field',  # have it, may as well use it.
     'users',
+    'staff',
 ]
 
 MIDDLEWARE = [

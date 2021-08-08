@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit User Details{% endblock %}
+
+{% block content %}
+
+<div>
+  <!-- user edit form -->
+  <form method="POST" action="{% url 'staff-users-edit' pk=object.pk %}">
+  {% csrf_token %}
+
+  <div class="row">
+    <!-- left side of top -->
+    <div class="col-md-4">
+      <div>
+        <h4>User Details for {% if object.get_full_name %}{{ object.get_full_name }}{% else %}{{ object.email }}{% endif %}</h4>
+      </div>
+
+      <hr/>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="id_first_name">First Name</label>
+          <input type="text" class="form-control" id="id_first_name" placeholder="First Name" value="{{ object.first_name }}" maxlength="150" name="first_name">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="id_last_name">Last Name</label>
+          <input type="text" class="form-control" id="id_last_name" placeholder="Last Name" value="{{ object.last_name }}" maxlength="150" name="last_name">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label for="id_phone">Phone Number</label>
+          <input type="text" class="form-control" id="id_phone" placeholder="+1234567890" value="{{ object.phone }}" maxlength="32" name="phone">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label for="id_nickname">Nick- or Displayname</label>
+          <input type="text" class="form-control" id="id_nickname" placeholder="Nick- or Display Name" value="{{ object.nickname }}" maxlength="128" name="nickname">
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <h4>
+        Unix Login Details
+      </h4>
+
+      <hr/>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="id_unixlogin">Unix Login</label>
+          <span>{{form.unixlogin}}</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="id_unixname">Unix Login Name</label>
+          <input type="text" class="form-control" id="id_unixname" placeholder="unix login name" value="{{ object.unixname }}" maxlength="32" name="unixname">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="id_homedir">Unix Home Directory</label>
+          <input type="text" class="form-control" id="id_homedir" placeholder="unix Home Directory Path" value="{{ object.homedir }}" maxlength="32" name="homedir">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="id_shell">Unix Shell Name</label>
+          <input type="text" class="form-control" id="id_shell" placeholder="unix login name" value="{{ object.shell }}" maxlength="32" name="shell">
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <h4>
+        Departments
+      </h4>
+
+      <hr/>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            {{form.departments}}
+          </div>
+        </div>
+      </div>
+
+      <div style="clear:both;">&nbsp;</div>
+
+      <div class="row">
+        <div class="text-right">
+          <a class="btn btn-primary" type="submit" class="btn btn-primary right" href="{% url 'dpts-new' %}"><span class="bi bi-pencil"> New Department</span></a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-md-4">
+      <h4>
+        Groups
+      </h4>
+
+      <hr/>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            {{form.unixgroups}}
+          </div>
+        </div>
+      </div>
+
+      <div style="clear:both;">&nbsp;</div>
+
+      <div class="row">
+        <div class="text-right">
+          <a class="btn btn-primary" type="submit" class="btn btn-primary right" href="{% url 'unix-groups-new' %}"><span class="bi bi-pencil"> New Group</span></a>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="text-right">
+        <button class="btn btn-primary" type="submit" class="btn btn-primary right"><span class="bi bi-pencil"> Save Changes</span></button>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  {% if form.errors %}
+  <div>
+      {% for field in form %}
+          {% for error in field.errors %}
+             <div class="alert alert-danger">
+                  <strong>{{ field.label }} : {{ error|escape }}</strong>
+             </div>
+          {% endfor %}
+      {% endfor %}
+      <hr/>
+   </div>
+   {% endif %}
+
+</form>
+</div>
+{% endblock %}

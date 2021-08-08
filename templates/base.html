@@ -7,88 +7,95 @@
     <!-- <meta name="author" content=""> -->
     <!-- <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico"> -->
 
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Latest compiled and minified CSS https://www.bootstrapcdn.com/ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
 
     <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/darkly/bootstrap.min.css" integrity="sha384-nNK9n28pDUDDgIiIqZ/MiyO3F4/9vsMtReZK39klb/MtkZI3/LtjSjlmyVPS3KdN" crossorigin="anonymous">    <!-- FA fonts -->
 
-    <!-- FA fonts -->
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" type="text/css" rel="stylesheet">
+    <!-- BS icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" integrity="sha384-tKLJeE1ALTUwtXlaGjJYM3sejfssWdAaWR2s97axw4xkiAdMzQjtOjgcyw0Y50KU" crossorigin="anonymous">
 
     <title>Welcome to User Self-Service</title>
   </head>
 
   <body>
     <header>
-      <!-- Fixed navbar -->
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">User Self-Service</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="{% url 'home' %}">Home</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Actions
-              </a>
-
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{% url 'password_reset' %}">Password Reset</a>
-                <a class="dropdown-item" href="{% url 'session-list-view' %}">View Sessions</a>
-                {% if user.is_staff %}
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{% url 'users-view' %}">View/Edit Users</a>
-                <a class="dropdown-item" href="{% url 'dpts-view' %}">View/Edit Departments</a>
-                {% endif %}
-                {% if user.is_superuser %}
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a>
-                {% endif %}
-              </div>
-            </li>
-          </ul>
-
-          <ul class="navbar-nav ml-auto">
-
-            {% if user.is_authenticated %}
-            <li class="nav-item">
-              <a class="btn btn-dark mr-1" title="{{ user.get_full_name }}" href="{% url 'edit-user-profile' %}">{{ user.email }}
-                <span class="fa fa-fw fa-user"></span>
-              </a>
-            </li>
-            <li class="nav-item">
-              {% if user.is_verified %}
-                <a type="button" class="btn btn-dark mr-1" title="2FA Active" href="{% url 'two_factor:profile' %}">
-                  <span class="fa fa-fw fa-lock" title="2FA Active"></span>
+      <nav class="navbar navbar-expand-lg navbar-darkly bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{% url 'home' %}">User Self-Service</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Actions
                 </a>
-              {% else %}
-                {% if user.default_device %}
-                  <a type="button" class="btn btn-dark mr-1" title="2FA Not Active" href="{% url 'two_factor:login' %}">
-                  <span class="fa fa-fw fa-unlock"></span>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li><a class="dropdown-item" href="{% url 'password_reset' %}">Password Reset</a></li>
+                  {% if user.is_authenticated %}
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'sessions-list' %}">List Sessions</a></li>
+                  <li><a class="dropdown-item" href="{% url 'user-keys-list' %}">List SSH Keys</a></li>
+                  {% endif %}
+                </ul>
+              </li>
+
+              {% if user.is_staff %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Staff Actions
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li><a class="dropdown-item" href="{% url 'staff-users-list' %}">List/Edit Users</a></li>
+                  <li><a class="dropdown-item" href="{% url 'dpts-list' %}">List/Edit Departments</a></li>
+                  <li><a class="dropdown-item" href="{% url 'unix-groups-list' %}">List/Edit Unix Groups</a></li>
+                  {% if user.is_superuser %}
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a></li>
+                  {% endif %}
+                </ul>
+              </li>
+              {% endif %}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a class="btn btn-dark mr-1" title="{{ user.get_full_name }}" href="{% url 'user-edit-profile' %}">
+                  <span class="bi bi-person-circle"> {{ user.email }}</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                {% if user.is_verified %}
+                  <a type="button" class="btn btn-dark mr-1" title="2FA Active" href="{% url 'two_factor:profile' %}">
+                    <span class="bi bi-shield-lock" title="2FA Active"></span>
                   </a>
                 {% else %}
-                  <a type="button" class="btn btn-dark mr-1" title="2FA Not Active" href="{% url 'two_factor:setup' %}">
-                  <span class="fa fa-fw fa-exclamation-circle"></span>
-                  </a>
+                  {% if user.default_device %}
+                    <a type="button" class="btn btn-dark mr-1" title="2FA Not Active" href="{% url 'two_factor:login' %}">
+                    <span class="bi bi-shield-slash"></span>
+                    </a>
+                  {% else %}
+                    <a type="button" class="btn btn-dark mr-1" title="2FA Not Active" href="{% url 'two_factor:setup' %}">
+                    <span class="bi bi-shield-slash"></span>
+                    </a>
+                  {% endif %}
                 {% endif %}
-              {% endif %}
-            </li>
+              </li>
 
-            <li class="nav-item">
-              <a class="btn btn-primary mr-1" href="{% url 'logout' %}">Logout</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="btn btn-primary mr-1" href="{% url 'login' %}">Login</a>
-            </li>
-            {% endif %}
-          </ul>
+              <li class="nav-item">
+                <a class="btn btn-primary mr-1" href="{% url 'logout' %}">Logout</a>
+              </li>
+              {% else %}
+              <li class="nav-item">
+                <a class="btn btn-primary mr-1" href="{% url 'login' %}">Login</a>
+              </li>
+              {% endif %}
+            </ul>
+          </div>
         </div>
       </nav>
     </header>
@@ -108,8 +115,7 @@
     -->
 
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- bootstrap js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
   </body>
 </html>

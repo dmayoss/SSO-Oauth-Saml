@@ -9,6 +9,7 @@ from .managers import CustomUserManager
 
 class UnixGroups(models.Model):
     group_name = models.CharField(max_length=30, default='group', unique=True)
+    description = models.TextField(blank=True, default="")
 
     def __str__(self):
         return self.group_name
@@ -107,3 +108,6 @@ class UserKeys(models.Model):
 
     class Meta:
         verbose_name_plural = "User Keys"
+
+    def __str__(self):
+        return "{} {}".format(self.user, self.created)
