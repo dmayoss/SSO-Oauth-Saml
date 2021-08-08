@@ -163,6 +163,8 @@
   </div>
 </div>
 
+<hr/>
+
 {% for key in user.userkeys_set.all %}
 <div class="row">
   <div class="col-md-3">
@@ -178,7 +180,7 @@
       </form>
   </div>
   <div class="col-md-6">
-    <p>{{ key.key_data }}</p>
+    <p class="text-break text-wrap">{{ key.key_data }}</p>
   </div>
   <div class="col-md-3 text-right">
     <p><a type="button" class="btn btn-primary" href="{% url 'user-keys-edit' pk=key.pk %}" title="Edit"><span class="bi bi-pencil"> Edit</span></a></p>
@@ -188,16 +190,15 @@
       </form>
   </div>
 </div>
-
+<hr/>
 {% empty %}
 <div class="row">
   <div class="col-md-3">
     No SSH keys yet.
   </div>
 </div>
-{% endfor %}
-
 <hr/>
+{% endfor %}
 
 <div class="row">
   <div class="col-md-12 text-right">
