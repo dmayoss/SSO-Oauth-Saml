@@ -1,11 +1,10 @@
 from django.urls import path
 
-from .views import UserEditView, UserEditProfileView, UserKeysListView, UserKeysEditView, UserKeysNewView, UserKeysDeleteView, UserKeysActView
+from .views import UserEditView, UserKeysListView, UserKeysEditView, UserKeysNewView, UserKeysDeleteView, UserKeysActView
 from user_sessions.views import SessionDeleteView, SessionListView
 
 
 urlpatterns = [
-    path('edit', UserEditProfileView.as_view(), name="user-edit-profile"),
     path('edit/<pk>', UserEditView.as_view(), name="user-edit"),
     path('keys', UserKeysListView.as_view(), name="user-keys-list"),
     path('keys/<pk>', UserKeysEditView.as_view(), name="user-keys-edit"),

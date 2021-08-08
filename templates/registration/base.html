@@ -64,9 +64,9 @@
 
               {% if user.is_authenticated %}
               <li class="nav-item">
-                <a class="btn btn-dark mr-1" title="{{ user.get_full_name }}" href="{% url 'user-edit-profile' %}">
-                  <span class="bi bi-person-circle"> {{ user.email }}</span>
-                </a>
+                <div class="btn">
+                  <span class="bi bi-person-circle" title="{{ user.get_full_name }}"> {{ user.email }}</span>
+                </div>
               </li>
               <li class="nav-item">
                 {% if user.is_verified %}
