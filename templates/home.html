@@ -116,7 +116,7 @@
         <div class="row">
           <div class="col-md-12">
             <ul>
-              {% for group in user.unixgroup.all %}
+              {% for group in user.unixgroups.all %}
                 <li> {{ group }}</li>
                 {% empty %}
                 <li>Not in any unix groups yet</li>
