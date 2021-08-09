@@ -9,16 +9,6 @@ from users.models import CustomUser, UserKeys
 from users.forms import NewUserKeyForm, UserEditForm
 
 
-class UserEditProfileView(UpdateView):
-    model = CustomUser
-    fields = [
-        'first_name', 'last_name', 'nickname', 'phone',
-        'unixname', 'homedir', 'shell',
-        ]
-    success_url = reverse_lazy('home')
-    template_name = 'users/edit_user.html'
-
-
 class UserEditView(UpdateView):
     model = CustomUser
     form_class = UserEditForm
@@ -33,7 +23,6 @@ class UserEditView(UpdateView):
 
     def get_success_url(self, *args, **kwargs):
         return reverse('home')
-
 
 
 class UserKeysListView(ListView):

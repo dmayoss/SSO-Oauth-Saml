@@ -4,8 +4,6 @@ from users.models import CustomUser, UserKeys
 
 
 class SignUpForm(UserCreationForm):
-    # first_name = forms.CharField(max_length=30, required=False, help_text='Optional')
-    # last_name = forms.CharField(max_length=30, required=False, help_text='Optional')
     email = forms.EmailField(max_length=128, help_text='Enter a valid email address')
 
     class Meta:
@@ -23,6 +21,5 @@ class UserEditForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = [
-            'first_name', 'last_name', 'nickname', 'phone',
-            'unixname', 'homedir', 'shell',
+            'first_name', 'last_name', 'nickname', 'phone', 'shell',
             ]
