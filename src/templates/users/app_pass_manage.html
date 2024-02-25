@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+  <div class="header">
+    <h4 class="position-absolute-left">Application Password Management</h4>
+
+    {% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe|escape }}
+            </div>
+        {% elif message.tags == 'error' %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe }}
+            </div>
+        {% elif message.tags == 'info' %}
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe|escape }}
+            </div>
+        {% elif message.tags == 'warning' %}
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe|escape }}
+            </div>
+        {% endif %}
+    {% endfor %}
+    {% endif %}
+  </div>
+
+  <hr/>
+
+  {% if newpass %}
+  <div class="row">
+    <div class="col-md-12">
+      <p><b>ATTENTION!</b> Your new <b>{{ newpass.application }}</b> password for <b>{{ newpass.name }}</b> is:</p>
+      <p><h4 class="text-center">{{ newpass.pass }}</h4></p>
+      <p>Please make a note of it and then <a type="button" class="btn btn-success" href="{% url 'home' %}">Reload</a> this page to remove it from view.</p>
+    </div>
+  </div>
+  <hr/>
+  {% endif %}
+
+  {% for object in object_list %}
+  <div class="row">
+    <div class="col-md-3">
+      <h4>{{ object.get_application_display }}</h4>
+      <p>
+        {% if object.active %}
+        <a class="badge bg-success" href="{% url 'user-apps-toggle' pk=object.pk %}">
+          <i class="bi bi-hand-thumbs-up"> Active</i>
+        </a>
+        {% else %}
+        <a class="badge bg-warning" href="{% url 'user-apps-toggle' pk=object.pk %}">
+          <i class="bi bi-hand-thumbs-down"> Inactive</i>
+        </a>
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="col-md-6">
+      <form method="POST" action="{% url 'user-apps-edit' pk=object.pk %}">
+        {% csrf_token %}
+        <p><input class="form form-control" type="text" placeholder="rename me" name="name" value="{{ object.name }}"></p>
+        <input type="hidden" name="application" value="{{ object.application }}">
+        <div class="btn-group" role="group" aria-label="Advanced">
+          <input type="submit" class="btn btn-primary" value="Rename">
+          <a type="button" class="btn btn-info" href="{% url 'user-apps-reset' pk=object.pk %}">Reset</a>
+          <a type="button" class="btn btn-danger" href="{% url 'user-apps-delete' pk=object.pk %}">Delete</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <hr/>
+  
+  {% empty %}
+  {% if not newpass %}
+  <p>No Application Passwords Set</p>
+  <hr/>
+  {% endif %}
+  {% endfor %}
+  
+
+  {% if form %}
+  <p>
+    <form method="POST" action="{% url 'user-apps-create' %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" class="btn btn-primary" value="Create">
+    </form>
+  </p>
+  {% endif %}
+
+</div>
+
+{% endblock content %}

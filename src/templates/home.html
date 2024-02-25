@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% load sshtags %}
+
+{% block content %}
+
+<div class="container">
+
+  {% if user.is_authenticated %}
+  {% if user.is_verified %} {# 2FA setup and active #}
+
+  <div class="header">
+  {% if messages %}
+  {% for message in messages %}
+      {% if message.tags == 'success' %}
+          <div class="alert alert-success alert-dismissible" role="alert">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              {{ message|safe|escape }}
+          </div>
+      {% elif message.tags == 'error' %}
+          <div class="alert alert-danger alert-dismissible" role="alert">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              {{ message|safe }}
+          </div>
+      {% elif message.tags == 'info' %}
+          <div class="alert alert-info alert-dismissible" role="alert">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              {{ message|safe|escape }}
+          </div>
+      {% elif message.tags == 'warning' %}
+          <div class="alert alert-warning alert-dismissible" role="alert">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              {{ message|safe|escape }}
+          </div>
+      {% endif %}
+  {% endfor %}
+  {% endif %}
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Welcome to SSO</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <h2>User Details</h2>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <dl class="row">
+            <dt class="col-sm-4">Full Name</dt>
+            <dd class="col-sm-8">{{ user.get_full_name }}</dd>
+            <dt class="col-sm-4">Phone Number</dt>
+            <dd class="col-sm-8">{{ user.phone }}</dd>
+            <dt class="col-sm-4"> Email</dt>
+            <dd class="col-sm-8">{{ user.email }}</dd>
+            <form method="POST" action="{% url 'home' %}">
+              {% csrf_token %}
+
+              <dt class="col-sm-8">
+                <label for="id_alt_email">Alternate Email Address:</label>
+              </dt>
+              <dd class="col-sm-8">
+                <input type="text" name="alt_email" value="{{ user.alt_email }}" class="form-control" maxlength="254" id="id_alt_email">
+              </dd>
+
+              <dt class="col-sm-8">
+                <!-- user form (alt email) -->
+                  <button class="btn btn-primary float-end" type="submit" class="btn btn-primary end">
+                    <span class="bi bi-pencil"> Save Changes</span>
+                  </button>
+              </dt>
+              <dd class="col-sm-4">&nbsp;</dd> <!-- keeps things tidy -->
+    
+          </dl>
+        </div>
+      </div>
+    </div> <!-- end 1st col -->
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+
+      <div class="row">
+        <h2>Out-of-Office Status</h2>
+      </div>
+
+      {% if user.is_ooo %}
+      <div class="row">
+          <h4>You are <a type="button" class="btn btn-primary" href="{% url 'user-ooo' %}"><span class="bi bi-calendar2-minus"> Out of the Office</span></a></h4>
+      </div>
+      <div class="row">
+        <label for="id_ooo_message"><b>Out-of-Office Message:</b></label>
+        <textarea name="ooo_message" cols="40" rows="10" class="form-control" id="id_ooo_message">{{ user.ooo_message }}</textarea>
+      </div>
+
+      <div style="clear:both;">&nbsp;</div>
+
+      <div class="row justify-content-end">
+        <div class="col-md-3 col-mr-auto">
+        <button class="btn btn-primary float-end" type="submit" class="btn btn-primary">
+          <span class="bi bi-pencil"> Save Changes</span>
+        </button>
+        </div>
+      </div>
+
+      {% else %}
+        <h4>You are <a type="button" class="btn btn-primary" href="{% url 'user-ooo' %}"><span class="bi bi-calendar2-plus"> In the Office</span></a></h4>
+      {% endif %}
+    </div>
+  </div>
+
+</form>
+
+  {% else %} {# no 2FA setup / 2FA not active #}
+  <div class="row">
+    <div class="col-md-12">
+      <p>Welcome to SSO. Your account is not setup with 2FA. Please setup 2FA to continue.</p>
+    </div>
+    <div class="col-md-12">
+      {% if user.default_device %}
+        <a type="button" class="btn btn-primary" title="2FA Not Active" href="{% url 'two_factor:login' %}">
+          <span class="bi bi-shield-slash">Please Login via 2FA</span>
+        </a>
+      {% else %}
+        <a type="button" class="btn btn-info" title="2FA Not Setup" href="{% url 'two_factor:setup' %}">
+          <span class="bi bi-shield-slash">Please Setup 2FA</span>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %} {# end if no 2FA #}
+  {% endif %} {# end if authenticated #}
+  </div>
+</div> <!-- container end -->
+
+{% endblock content %}

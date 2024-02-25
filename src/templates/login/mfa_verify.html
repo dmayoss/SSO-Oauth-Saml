@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <h1>Verify TOTP</h1>
+  <p>
+    Your brand new QR code is below.
+    Using Google Authenticator, Microsoft Authenticator or another TOTP package, please read the QR in and then using your TOTP, log in.
+  </p>
+
+  <p>
+  <img src="{{ qr_image }}" class="bg-white">
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary" type="submit">Verify</button>
+  </form>
+
+  <p>The hashed key is: {{ hashed_key }}</p>
+{% endblock %}

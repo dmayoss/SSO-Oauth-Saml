@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSO</title>
+
+    <!-- <link rel="stylesheet" href="/static/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="/static/css/bootstrap.darkly.css">
+
+    <!-- icons -->
+    <link rel="stylesheet" href="/static/bootstrap-icons/font/bootstrap-icons.min.css">
+
+    <!-- favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home' %}">Home</a>
+        <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+          <ul class="navbar-nav ms-auto">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <div class="btn">
+                <span class="bi bi-person-circle" title="{{ user.get_full_name }}"> {{ user.email }}</span>
+              </div>
+            </li>
+            <li class="nav-item">
+              {% if user.is_verified %}
+                <a type="button" class="btn btn-dark mr-1" title="2FA Active - View Profile" href="{% url 'two_factor:profile' %}">
+                  <span class="bi bi-shield-lock" title="2FA Active"></span>
+                </a>
+              {% else %}
+                {% if user.default_device %}
+                  <a type="button" class="btn btn-dark mr-1" title="2FA Not Active" href="{% url 'two_factor:login' %}">
+                  <span class="bi bi-shield-slash"></span>
+                  </a>
+                {% else %}
+                  <a type="button" class="btn btn-dark mr-1" title="2FA Not Active" href="{% url 'two_factor:setup' %}">
+                  <span class="bi bi-shield-slash"></span>
+                  </a>
+                {% endif %}
+              {% endif %}
+            </li>
+            {% endif %}
+          </ul>
+
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- page content -->
+  <main class="container">
+  {% block content %}
+  
+  {% endblock content %}
+  </main>
+
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

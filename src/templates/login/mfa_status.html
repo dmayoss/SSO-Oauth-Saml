@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>MFA Enroll Status</h2>
+
+  <p>If you wish, you can see about your <a href="{% url 'mfa-tokens' %}" class='btn btn-primary'>Backup Tokens</a></p>
+
+  <p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Sign Up</button>
+  </form>
+  </p>
+
+  <p>If for some reason you're having issues with your MFA, you'll need to de-enroll and then re-enroll after.</p>
+  <p>This can be done here: <a href="{% url 'mfa-unenroll' %}" class="btn btn-danger">Un-Enroll in MFA</a></p>
+
+  {% if qr_image %}
+  <img src="{{ qr_image }}" class="bg-white">
+  {% endif %}
+
+{% endblock %}

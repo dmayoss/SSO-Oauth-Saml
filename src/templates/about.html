@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+<div class="header">
+  {% if messages %}
+  {% for message in messages %}
+      {% if message.tags == 'success' %}
+          <div class="alert alert-success alert-dismissible" role="alert">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              {{ message|safe|escape }}
+          </div>
+      {% elif message.tags == 'error' %}
+          <div class="alert alert-danger alert-dismissible" role="alert">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              {{ message|safe }}
+          </div>
+      {% elif message.tags == 'info' %}
+          <div class="alert alert-info alert-dismissible" role="alert">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              {{ message|safe|escape }}
+          </div>
+      {% elif message.tags == 'warning' %}
+          <div class="alert alert-warning alert-dismissible" role="alert">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              {{ message|safe|escape }}
+          </div>
+      {% endif %}
+  {% endfor %}
+  {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>About SSO</h2>
+        <p>This site is designed for employees and other authorized users as a single place to easily create and update their user details and various account passwords.</p>
+        <p>It is written in Django, which is coded in Python, and uses various Python libraries and toolkits to enable the following interfaces</p>
+        <p>
+            <ul>
+                <li>SAML</li>
+                <li>OAUTH (Gitlab so far)</li>
+                <li>LDAP</li>
+                <li>Email (application) Passwords</li>
+            </ul>
+        </p>
+    </div>
+</div>
+
+<hr/>
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>GDPR</h2>
+        <p>This site is designed to be fully GDPR Compliant.</p>
+        <p>This page will now describe:</p>
+        <p>
+            <ul>
+                <li>What personal information is collected</li>
+                <li>Why it is collected and stored</li>
+                <li>How it is used and how it will be dealt with (the lifecycle)</li>
+                <li>What your options are regarding your personal data</li>
+                <li>In case of data breach</li>
+            </ul>
+        </p>
+    </div>
+
+    <div class="col-md-12">
+        <h4>What Personal Information is Collected</h4>
+        <p>This website collects and stores the following personal information from all registered users</p>
+        <p>
+            <ul>
+                <li>Full Name</li>
+                <li>Email Address (and optionally alternate, personal Email Address)</li>
+                <li>Phone Number</li>
+            </ul>
+        </p>
+        <p>Other pieces of information may be associated with the respective user accounts, but these are not 'personal' information points.</p>
+
+        <h4>Why It Is Collected</h4>
+        <p>As employees of Company, or users of this service, the above information is the minimum required for legitimate business interests to be fulfilled by the service and in general in relation to its users.</p>
+        <p>Where such mandatory information is not absolutely required, dummy information may be used, but this will not be possible for all accounts due to the nature of the user themselves.</p>
+
+        <h4>How Personal Information is Used and Dealt With</h4>
+        <p>As this service forms a core part of Company's infrastructure, the following pieces of personal information as used thusly</p>
+        <p>
+            <ul>
+                <li>Users' Full Names are used as identifying information for other users including administrators of this service</li>
+                <li>Email Addresses are used as the login</li>
+                <li>Personal Email Addresses are one method available for staff to supply reset credentials</li>
+                <li>Phone Numbers are used for the initial and any subsequent reset credentials via SMS</li>
+            </ul>
+        </p>
+        <p>The above information will be stored for as long as necessary regarding the users employment by or use of Company's services is valid, but may be anonymized after that date.</p>
+
+        <h4>Your Options</h4>
+        <p>As this service forms a core part of Company's infrastructure, you must give consent to use this service to perform various duties that rely on it.</p>
+        <p>Not giving consent means you will be unable to access a large number of services.</p>
+    
+        <h4>In Case of Data Breach</h4>
+        <p>If any data breach occurs, all users will be notified via a combination of email and/or sms as soon as possible, wherein will be detailed</p>
+        <p>
+            <ul>
+                <li>When the data breach occurred</li>
+                <li>The suspected impact for any users, including what information (if any) was obtained</li>
+            </ul>
+        </p>
+    </div>
+    
+</div>
+
+
+{% endblock content %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+  <div class="header">
+    <h4>LDAP Users</h4>
+  </div>
+
+  <div>
+  {% if messages %}
+  {% for message in messages %}
+      {% if message.tags == 'success' %}
+          <div class="alert alert-success alert-dismissible" role="alert">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              {{ message|safe|escape }}
+          </div>
+      {% elif message.tags == 'error' %}
+          <div class="alert alert-danger alert-dismissible" role="alert">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              {{ message|safe }}
+          </div>
+      {% elif message.tags == 'info' %}
+          <div class="alert alert-info alert-dismissible" role="alert">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              {{ message|safe|escape }}
+          </div>
+      {% elif message.tags == 'warning' %}
+          <div class="alert alert-warning alert-dismissible" role="alert">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              {{ message|safe|escape }}
+          </div>
+      {% endif %}
+  {% endfor %}
+  {% endif %}
+  </div>
+
+  <hr/>
+
+  {% for user in ssousers %}
+  <div class="row">
+    <div class="col-md-6">
+      <p>{{ user }}
+        {% if user.username in ldaplist %}
+        {% if user.ldapuser.lockedTime %}
+        <a type="button" class="badge bg-info text-decoration-none" href="{% url 'ldap-user-lock' pk=user.username %}">
+          <span class="bi bi-lock"> Unix Account Locked</span>
+        </a>
+        {% else %}
+        <a type="button" class="badge bg-success text-decoration-none" href="{% url 'ldap-user-lock' pk=user.username %}">
+          <span class="bi bi-unlock"> Unix Account Unlocked</span>
+        </a>
+        {% endif %}
+        {% endif %}
+      </p>
+      <p>
+      {% if user.username not in ldaplist %}
+      <a type="button" class="btn btn-info" href="{% url 'ldap-user-new' pk=user.pk %}">
+        {{ user.username }}
+      </a>
+      {% else %}
+      <a type="button" class="btn btn-primary" href="{% url 'ldap-staff-user-edit' pk=user.username %}">
+        {{ user.username }}
+      </a>
+      {% endif %}
+      </p>
+    </div>
+
+    <div class="col-md-6">
+      {% if user.ldapuser %}
+      <div>
+        CN / Username
+        <span class="float-end">{{ user.ldapuser.cn }} | {{ user.ldapuser.username }}</span>
+      </div>
+      <div>
+        Unix UID / GID
+        <span class="float-end">{{ user.ldapuser.uid }} / {{ user.ldapuser.gid }}</span>
+      </div>
+      <div>
+        Unix Home Directory
+        <span class="float-end">{{ user.ldapuser.homedir }}</span>
+      </div>
+      <div>
+        Unix Shell
+        <span class="float-end">{{ user.ldapuser.shell }}</span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  <hr/>
+  {% endfor %}
+
+</div>
+{% endblock content %}

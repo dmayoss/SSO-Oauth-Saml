@@ -1,0 +1,49 @@
+{% load widget_tweaks %}
+
+{% load filters %}
+
+{% csrf_token %}
+
+  <!--
+       wizard.management_form.as_p
+       wizard.form.as_p
+  -->
+
+  <div class='container-fluid'>
+    <div class="form-group">
+      {{ wizard.management_form.as_p }}
+    </div>
+
+    {% for hidden in wizard.form.hidden_fields %}
+      {{ hidden }}
+    {% endfor %}
+
+    {% for field in wizard.form.visible_fields %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field|add_class:'form-control' }}
+        {% for error in field.errors %}
+          <span class="help-block">{{ error }}</span>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    {% if wizard.form|class_name == 'AuthenticationForm' %}
+    <div class="form-group">
+      <p><label for="box">Show Password:</label> <input type="checkbox" id="box" class="form-check-input" onclick ="reveal()"></p>   
+    </div>
+
+    <script type="text/javascript">
+        function reveal()
+        {
+            if (document.getElementById('box').checked)
+                {document.getElementById("id_auth-password").type='text';}
+            else
+                document.getElementById("id_auth-password").type='password';
+        }
+    </script>
+    {% endif %}
+  </div>
+
+  <div class='clearfix'>&nbsp;</div>
+

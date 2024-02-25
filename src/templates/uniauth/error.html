@@ -1,0 +1,28 @@
+<!-- Extends default Bootstrap Italia template -->
+{% extends "uniauth/idp_base.html" %}
+{% load static %}
+
+{% block content %}
+
+    <div class="callout danger">
+        <div class="callout-title">
+            Error during SAML2 authentication
+        </div>
+        <p>
+            {% if exception_type %}
+                <p class="mb-2">
+                    <strong>{{exception_type}}</strong>
+                    <br>
+                </p>
+                {% if exception_msg %}
+                    <p>{{exception_msg}}</p>
+                {% endif %}
+            {% endif %}
+            {% if extra_message %}
+                <p>{{extra_message}}</p>
+            {% endif %}
+        </p>
+    </div>
+
+{% endblock content %}
+

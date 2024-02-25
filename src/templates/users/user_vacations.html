@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+<div class="header">
+
+  <div class="row">
+    <div class="col-md-12">
+    {% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe|escape }}
+            </div>
+        {% elif message.tags == 'error' %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe }}
+            </div>
+        {% elif message.tags == 'info' %}
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe|escape }}
+            </div>
+        {% elif message.tags == 'warning' %}
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe|escape }}
+            </div>
+        {% endif %}
+    {% endfor %}
+    {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<hr/>
+
+<div class="row">
+
+  <!-- left side of screen -->
+  <div class="row">
+    <div class="col-md-4">
+      <p>
+        <h4 class="position-absolute-left">Out of Office Status</h4>
+        <a type="button" class="btn btn-primary float-right bi bi-calendar2-plus" href="{% url 'user-vacations-new' %}"> New Entry</a>
+      </p>
+      <p>
+      Found {{ user.uservacations_set.all.count }} entries.
+      </p>
+    </div>
+  </div>
+
+  <!-- right side of screen -->
+  <div class="row">
+  <div class="col-md-12">
+
+    <!-- Iterate over object_list -->
+    <div class="row">
+
+      <!-- left side of user -->
+      <div class="col-md-12">
+        <p>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Start</th>
+                <th scope="col">End</th>
+                <th scope="col">Type</th>
+                <th scope="col">Message</th>
+                <th scope="col">Manage Entry</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for vacation in user.uservacations_set.all %}
+            {% now "Y-m-d" as todays_date %}
+              <tr>
+                <td scope="row">{{ vacation.start_date|date:"Y-m-d" }}</td>
+                <td>{{ vacation.end_date|date:"Y-m-d" }}</td>
+                <td>{{ vacation.get_vacation_type_display }}</td>
+                <td>{{ vacation.vacation_message }}</td>
+                <td>
+                  {% if vacation.start_date|date:"Y-m-d" <= todays_date and vacation.end_date|date:"Y-m-d" >= todays_date %}
+                  <a type="button" class="btn btn-primary" href="{% url 'user-vacations-end' pk=vacation.pk %}">
+                    <span class="bi bi-calendar2-x"> End</span>
+                  </a>
+                  {% endif %}
+
+                  {% if vacation.start_date|date:"Y-m-d" >= todays_date or vacation.end_date >= todays_date %}
+                  <a type="button" class="btn btn-primary" href="{% url 'user-vacations-edit' pk=vacation.pk %}">
+                    <span class="bi bi-calendar2-range"> Edit</span>
+                  </a>
+                  {% endif %}
+
+                  <a type="button" class="btn btn-primary" href="{% url 'user-vacations-del' pk=vacation.pk %}">
+                    <span class="bi bi-calendar2-minus"> Delete</span>
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </p>
+      </div>
+
+    </div>
+
+    <hr/>
+    <!-- If object_list is empty  -->
+
+    </div>
+  </div>
+  </div>
+</div>
+{% endblock content %}

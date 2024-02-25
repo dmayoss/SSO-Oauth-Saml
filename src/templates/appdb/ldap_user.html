@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% load sshtags %}
+
+{% block content %}
+
+<div class="container">
+
+  <div class="header">
+    <h4>LDAP User</h4>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+    {% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe|escape }}
+            </div>
+        {% elif message.tags == 'error' %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe }}
+            </div>
+        {% elif message.tags == 'info' %}
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe|escape }}
+            </div>
+        {% elif message.tags == 'warning' %}
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe|escape }}
+            </div>
+        {% endif %}
+    {% endfor %}
+    {% endif %}
+    </div>
+  </div>
+
+  <hr/>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div>
+        CN | Username:
+        <span class="float-end">{{ ldapuser.cn }} | {{ ldapuser.username }}</span>
+      </div>
+      <div>
+        Unix UID / GID:
+        <span class="float-end">{{ ldapuser.uid }} / {{ ldapuser.gid }}</span>
+      </div>
+      <div>
+        Unix Home Directory:
+        <span class="float-end">{{ ldapuser.homedir }}</span>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <div class="row">
+    <div class="col-md-4">
+      <form method="POST" action="{% url 'ldap-user-edit' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" class="btn btn-primary" value="Save">
+        <a type="button" class="btn btn-secondary" href="{% url 'home' %}">Cancel</a>
+      </form>
+    </div>
+  </div>
+
+  <hr/>
+
+  <div clas="row">
+    <h4>Current SSH Keys</h4>
+  </div>
+  
+  <hr/>
+  
+  <div class="accordion" id="sshkeysAccordian">
+    {% for sshkey in ldapuser.sshkeys %}
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="ssh{{ forloop.counter }}">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#sshkey{{ forloop.counter }}" aria-expanded="false" aria-controls="sshkey{{ forloop.counter }}">
+          {{ sshkey|sshkey_fingerprint }}
+        </button>
+      </h2>
+      <div id="sshkey{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="ssh{{ forloop.counter }}" data-bs-parent="#sshkeysAccordian">
+        <div class="accordion-body text-wrap text-break">
+          <p>{{ sshkey }}</p>
+          <p>
+          <form method="POST" class="post-form" action="{% url 'ldap-sshkey-del' %}">
+            {% csrf_token %}  
+            <input type="hidden" name="sshkey" value="{{ sshkey }}">
+            <input type="Submit" class="btn btn-secondary" value="Remove Key">
+          </form>
+          </p>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p>No SSH Keys yet</p>
+  {% endfor %}
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <form method="POST" action="{% url 'ldap-sshkey-add' %}">
+        {% csrf_token %}
+        {{ sshform.as_p }}
+        <input type="submit" class="btn btn-primary" value="Save">
+        <a type="button" class="btn btn-secondary" href="{% url 'home' %}">Cancel</a>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+{% endblock content %}

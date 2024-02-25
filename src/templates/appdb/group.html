@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+<div class="header">&nbsp;</div>
+
+<hr/>
+
+  <!-- Iterate over object list -->
+  <div class="row">
+
+    <!-- left side of top -->
+    <div class="col-md-12">
+      <div>
+        <h2>{{ group.name }}</h2>
+        <h4>{{ group }}, {{ group.dn }}</h4>
+      </div>
+
+      {% if messages %}
+      {% for message in messages %}
+          {% if message.tags == 'success' %}
+              <div class="alert alert-success alert-dismissible" role="alert">
+                  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                  {{ message|safe|escape }}
+              </div>
+          {% elif message.tags == 'error' %}
+              <div class="alert alert-danger alert-dismissible" role="alert">
+                  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                  {{ message|safe }}
+              </div>
+          {% elif message.tags == 'info' %}
+              <div class="alert alert-info alert-dismissible" role="alert">
+                  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                  {{ message|safe|escape }}
+              </div>
+          {% elif message.tags == 'warning' %}
+              <div class="alert alert-warning alert-dismissible" role="alert">
+                  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                  {{ message|safe|escape }}
+              </div>
+          {% endif %}
+      {% endfor %}
+      {% endif %}
+
+      <hr/>
+
+      <div class="row">
+        <div class="col-md-12">
+          <h4>Group Members</h4>
+        </div>
+      </div>
+      {% for member in group.members %}
+      <div class="row">
+          <div class="col-md-4">
+            {% for user in users %}
+              {% if user.username == member %}
+              {{ user.email }}
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          <div class="col-md-6">
+            <form method="POST" class="post-form" action="{% url 'ldap-group-edit' pk=group.name %}">
+              {% csrf_token %}
+              <input type="hidden" name="value" value="{{ member }}">
+              <input type="hidden" name="action" value="del">
+              <button type="Submit" class="btn btn-danger bi bi-person-dash"> Remove {{ member}} From Group</button>
+            </form>
+          </div>
+      </div>
+
+      <div class="row" style="clear:both;">&nbsp;</div>
+      {% endfor %}
+      
+      <hr/>
+
+      <div class="row">
+        <div class="col-md-12">
+          <h4>Non-Group Members</h4>
+        </div>
+      </div>
+
+      {% for object in users %}
+      {% if object.username not in group.members %}
+      <div class="row">
+          <div class="col-md-4">
+              {{ object.email }}
+          </div>
+
+          <div class="col-md-6">
+            <form method="POST" class="post-form" action="{% url 'ldap-group-edit' pk=group.name %}">
+              {% csrf_token %}
+              <input type="hidden" name="value" value="{{ object.username }}">
+              <input type="hidden" name="action" value="add">
+              <button type="Submit" class="btn btn-success bi bi-person-check"> Add {{ object.username }} To Group</button>
+            </form>
+          </div>
+      </div>
+
+      <div class="row" style="clear:both;">&nbsp;</div>
+      {% endif %}
+      {% endfor %}
+
+    </div>
+  </div>
+
+  <hr/>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="text-right">
+        <a type="button" class="btn btn-primary" href="{% url 'ldap-group-list' %}"><span class="bi bi-people"></span> Back to LDAP Groups</a>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+</div>
+
+{% endblock content %}

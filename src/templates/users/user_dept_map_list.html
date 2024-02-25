@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+  <div class="header">
+    <h4>User Department/Role Mapping</h4>
+  </div>
+
+  <hr/>
+
+  {% for object in object_list %}
+  <div class="row">
+    <div class="col-md-4">
+      <h4>
+      <p><span class="bi bi-person badge rounded-pill bg-info">{{ object.user }}</span></p>
+      <p><span class="bi bi-building badge rounded-pill bg-success">{{ object.department }}</span></p>
+      </h4>
+    </div>
+    <div class="col-md-4">
+      <form action="{% url 'staff-role-mgmt-edit' pk=object.pk %}" method="POST">
+        {% csrf_token %}
+        <p>
+        <select name="role" class="form-select form-control" id="id_role">
+          {% for value, choice in editform.fields.role.choices %}              
+          {% if value not in object.role %}
+          <option value="{{ value }}">{{ choice }}</option>
+          {% else %}
+          <option value="{{ value }}" selected>{{ choice }}</option>
+          {% endif %}
+          {% endfor %}
+        </select>
+        </p>
+        <p>
+          <button class="btn btn-primary float-left" type="submit"><span class="bi bi-pencil"> Update</span></button>
+          <a type="button" href="{% url 'staff-role-mgmt-del' pk=object.pk %}" class="btn btn-danger float-right" onclick="return confirm('Are you sure?');"> Remove</a>
+        </p>
+      </form>
+    </div>
+  </div>
+  <hr/>
+  {% empty %}
+  <div class="row">
+    <div class="col-md-12">
+      No Users with roles in any departments yet.
+    </div>
+  </div>
+  <hr/>
+  {% endfor %}
+
+  <div class="row">
+    <div class="col-md-12">
+      <h4>New Entry</h4>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-12">
+      <form action="{% url 'staff-role-manage' %}" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit"><span class="bi bi-pencil"> Save</span></button>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+{% endblock content %}

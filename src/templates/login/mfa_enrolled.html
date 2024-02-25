@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>MFA Enroll Status</h2>
+
+  {% if request.user.is_verified %}
+  <p>Congratulations, {{ request.user }}, you're good to go.</p>
+  <p>If you wish, you can see about your <a href="{% url 'mfa-tokens' %}" class='btn btn-primary'>Backup Tokens</a></p>
+  {% else %}
+  <h2>Welcome, {{ request.user }}.</h2>
+  <p>You will need to sign up for MFA. Please re-authenticate yourself to the form below, and we'll get you started.</p>
+
+  <p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Sign Up</button>
+  </form>
+  </p>
+  {% endif %}
+
+  <p>If for some reason you're having issues with your MFA, you'll need to de-enroll and then re-enroll after.</p>
+  <p>This can be done here: <a href="{% url 'mfa-unenroll' %}" class="btn btn-danger">Un-Enroll in MFA</a></p>
+  <p>If you are still have troubles, you can force a re-enroll by supplying your username and current password below.</p>
+  <p>
+  <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-success mt-2">
+              Accept
+      </button>
+  </form>
+  </p>
+
+
+  {% if form.errors %}
+  <div id="form-error">
+        <p>The operation could not be performed because one or more error(s) occurred.<br />Please resubmit the form after making the following changes:</p>
+            <ul>
+                    {% for field in form %}
+                        <li>{{ field.errors|striptags }}</li>
+                            {% endfor %}
+                                </ul>
+  </div>
+  {% endif %}
+
+
+{% endblock %}

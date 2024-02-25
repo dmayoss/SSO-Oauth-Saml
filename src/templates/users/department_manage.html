@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+<div class="header">
+  <h4>Manage Department "{{ department.department }}"</h4>
+</div>
+
+<hr/>
+
+<div>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+  <input type="submit" class="btn btn-primary" value="Update">
+  <a type="button" class="btn btn-secondary" href="{% url 'home' %}">Cancel</a>
+  </form>
+</div>
+
+<hr/>
+
+<h4>Department Members</h4>
+<hr/>
+{% for rolemap in department.userrolemap_set.all %}
+<div class="row">
+  <div class="col-md-1">
+    {% if 'USER' in rolemap.role %}
+    <div class="badge badge-success bi bi-person">{{ rolemap.role }}</div>
+    {% else %}
+    <div class="badge badge-danger  bi bi-person-circle">{{ rolemap.role }}</div>
+    {% endif %}
+  </div>
+  <div class="col-md-3">{{ rolemap.user }}</div>
+  <div class="col-md-3">
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="user" value="{{ rolemap.user.pk }}">
+        <input type="hidden" name="action" value="DEL">
+        <input type="submit" class="btn btn-danger" value="Remove">
+      </form>
+  </div>
+</div>
+<div style="clear:both;">&nbsp;</div>
+{% endfor %}
+
+{% endblock content %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+  <div class="header">
+    <h4>User Department Roles</h4>
+  </div>
+
+  <hr/>
+
+  {% for object in object_list %}
+  <div class="row">
+    <div class="col-md-3">
+      <p>{{ object.role }}</p>
+    </div>
+    <div class="col-md-3">
+      <p>{{ object.description }}</p>
+    </div>
+    <div class="col-md-3 text-right">
+      <a type="button" class="btn btn-primary" href="{% url 'staff-role-edit' pk=object.pk %}"><span class="bi bi-pencil"> Edit</span></a>
+    </div>
+    <div class="col-md-3 text-right">
+      <form action="{% url 'staff-role-del' pk=object.pk %}" method="post">
+        {% csrf_token %}
+
+        <button class="btn btn-danger" onclick="return confirm('Are you sure?');">Delete</button>
+      </form>
+    </div>
+  </div>
+  <hr/>
+    <!-- If object_list is empty  -->
+    {% empty %}
+    <div class="row">
+      No departments yet.
+    </div>
+    {% endfor %}
+
+    {% if user.is_staff or user.is_superuser %}
+    <div class="header">&nbsp;</div>
+    <div class="row">
+      <div class="col-md-9 text-right">
+        <a type="button" class="btn btn-primary" href="{% url 'staff-role-new' %}"><span class="bi bi-pencil"> New</span></a>
+      </div>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock content %}

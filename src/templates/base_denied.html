@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSO</title>
+
+    <!-- <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="/static/css/bootstrap.darkly.css">
+
+    <!-- icons -->
+    <link rel="stylesheet" href="/static/bootstrap-icons/font/bootstrap-icons.min.css">
+
+    <!-- favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home' %}">Home</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- page content -->
+  <main class="container">
+  {% block content %}
+  
+  {% endblock content %}
+  </main>
+
+<script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

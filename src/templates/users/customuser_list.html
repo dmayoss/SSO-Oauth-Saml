@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+<div class="header">
+
+  <div class="row">
+    <div class="col-md-12">
+    {% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe|escape }}
+            </div>
+        {% elif message.tags == 'error' %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe }}
+            </div>
+        {% elif message.tags == 'info' %}
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe|escape }}
+            </div>
+        {% elif message.tags == 'warning' %}
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe|escape }}
+            </div>
+        {% endif %}
+    {% endfor %}
+    {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<hr/>
+
+<div class="row">
+
+  <!-- left side of screen -->
+  <div class="col-md-4">
+    <p>
+      <h4 class="position-absolute-left">User List</h4>
+      <a type="button" class="btn btn-primary float-right bi bi-person-plus" href="{% url 'staff-user-new' %}"> New User</a>
+    </p>
+    <p>
+      <form action="{% url 'staff-user-list' %}" method="GET">
+        <!--<input class="form-control" name="q" type="text" placeholder="Search Email..."> -->
+        {{ form.as_p }}
+        <input type="submit" class="btn btn-primary" value="Search">
+        <a type="button" class="btn btn-secondary" href="{% url 'staff-user-list' %}">Cancel</a>
+      </form>
+    </p>
+    <p>
+    Found {{ object_list.count }} matching user(s).
+    </p>
+  </div>
+
+  <!-- right side of screen -->
+  <div class="col-md-8">
+
+    <!-- Iterate over object_list -->
+    {% for object in object_list %}
+    <div class="row">
+
+      <!-- left side of user -->
+      <div class="col-md-6">
+        <p>
+          {% if object.user_type in 'HOSTING HR' %}
+          <span class="badge bg-danger"><i class="bi bi-person-circle"> {{ object.get_user_type_display }}</i></span>
+          {% elif 'INTER' in object.user_type %}
+          <span class="badge bg-info"><i class="bi bi-exclamation-circle"> {{ object.get_user_type_display }}</i></span>
+          {% elif 'RETIR' in object.user_type %}
+          <span class="badge bg-secondary"><i class="bi bi-person-x-fill"> {{ object.get_user_type_display }}</i></span>
+          {% else %}
+          <span class="badge bg-success"><i class="bi bi-person"> {{ object.get_user_type_display }}</i></span>
+          {% endif %}
+
+          {% if object.is_active %}
+          <a class="badge bg-success text-decoration-none" href="{% url 'staff-user-toggle' pk=object.pk %}" onclick="return confirm('Are you sure you want to deactivate this account?')">
+            <i class="bi bi-hand-thumbs-up"> SSO Account Active</i>
+          </a>
+          {% else %}
+          <a class="badge bg-warning text-decoration-none" href="{% url 'staff-user-toggle' pk=object.pk %}" onclick="return confirm('Are you sure you want to activate this account?')">
+            <i class="bi bi-hand-thumbs-down"> SSO Account Inactive</i>
+          </a>
+          {% endif %}
+    
+        {% comment %}
+          {% if object.unixlogin %}
+          <a type="button" class="badge bg-success text-decoration-none" href="{% url 'staff-user-toggle-unix' pk=object.pk %}">
+            <i class="bi bi-hand-thumbs-up"> Unix Account Enabled</i>
+          </a>
+          {% else %}
+          <a type="button" class="badge bg-info text-decoration-none" href="{% url 'staff-user-toggle-unix' pk=object.pk %}">
+            <i class="bi bi-hand-thumbs-down"> Unix Account Disabled</i>
+          </a>
+          {% endif %}
+        
+          {% if object.ldapuser.lockedTime %}
+          <a type="button" class="badge bg-info text-decoration-none" href="{% url 'ldap-user-lock' pk=object.username %}">
+            <span class="bi bi-lock"> Unix Account Locked</span>
+          </a>
+          {% else %}
+          <a type="button" class="badge bg-success text-decoration-none" href="{% url 'ldap-user-lock' pk=object.username %}">
+            <span class="bi bi-unlock"> Unix Account Unlocked</span>
+          </a>
+          {% endif %}
+        {% endcomment %}
+        </p>
+
+        <!-- account edit -->
+        <p>
+          <a type="button" class="btn btn-primary" href="{% url 'staff-user-edit' pk=object.pk %}">
+            <span class="bi bi-pencil"></span>
+            {% if object.get_full_name %}{{ object.get_full_name }}{% else %}{{ object.email }}{% endif %}
+          </a>
+        </p>
+
+        {% comment %}
+        <p>
+          {% if object.ldapuser %}
+          <a type="button" class="btn btn-primary" href="{% url 'ldap-staff-user-edit' pk=object.username %}">
+            <span class="bi bi-terminal"> {{ object.username }}</span>
+          </a>
+          {% else %}
+          <a type="button" class="btn btn-info" href="{% url 'ldap-user-new' pk=object.pk %}">
+            <span class="bi bi-terminal"> {{ object.username }}</span>
+          </a>
+          {% endif %}  
+        </p>
+        {% endcomment %}
+
+        <p><span class="bi bi-mailbox">&nbsp;{{ object.email }}</span></p>
+        <p><span class="bi bi-phone">&nbsp;{{ object.phone }}</span></p>
+
+      </div>
+
+      <!-- right side of user -->
+      <div class="col-md-6">
+        <p>
+        <a type="button" class="btn btn-primary" href="{% url 'staff-user-reset-pass' pk=object.pk %}">
+          <span class="bi bi-person"> User Password Reset</span>
+        </a>
+        </p> 
+        {% comment %}
+        <p>
+        <a type="button" class="btn btn-warning" href="{% url 'staff-user-del-app' pk=object.pk %}">
+          <span class="bi bi-person"> Clear User App Passswords</span>
+        </a>
+        </p>
+        <p>
+        <a type="button" class="btn btn-warning" href="{% url 'ldap-sshkey-clear' pk=object.username %}">
+          <span class="bi bi-terminal"> Clear User SSH Keys</span>
+        </a>
+        </p>
+        {% endcomment %}
+      </div>
+    
+    </div>
+    <hr/>
+    <!-- If object_list is empty  -->
+    {% empty %}
+    <div class="row">No Users yet.</div>
+    <hr/>  
+    {% endfor %}
+
+
+    </div>
+  </div>
+</div>
+{% endblock content %}
