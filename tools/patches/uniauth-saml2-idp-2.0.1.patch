@@ -1,0 +1,404 @@
+diff -rp -x '*pyc' -x '*pycache*' userdb/venv/lib/python3.10/site-packages/uniauth_saml2_idp/admin.py userdb/uniauth_saml2_idp/admin.py
+*** userdb/venv/lib/python3.10/site-packages/uniauth_saml2_idp/admin.py	2023-03-01 13:16:52.868997474 +0200
+--- userdb/uniauth_saml2_idp/admin.py	2023-02-27 16:25:12.136857267 +0200
+*************** from . models import (AgreementRecord,
+*** 9,15 ****
+                        MetadataStore,
+                        ServiceProvider)
+  
+- 
+  def valida_elemento(modeladmin, request, queryset):  # pragma: no cover
+      for i in queryset:
+          try:
+--- 9,14 ----
+diff -rp -x '*pyc' -x '*pycache*' userdb/venv/lib/python3.10/site-packages/uniauth_saml2_idp/decorators.py userdb/uniauth_saml2_idp/decorators.py
+*** userdb/venv/lib/python3.10/site-packages/uniauth_saml2_idp/decorators.py	2023-03-01 13:16:52.868997474 +0200
+--- userdb/uniauth_saml2_idp/decorators.py	2023-02-27 16:25:12.136857267 +0200
+*************** from django.utils.translation import get
+*** 4,9 ****
+--- 4,11 ----
+  from django.shortcuts import render
+  from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT
+  
++ from django.conf import settings
++ 
+  from .utils import repr_saml
+  
+  
+*************** def store_params_in_session(request):
+*** 35,41 ****
+          msg = _('not a valid SAMLRequest: {}').format(
+              _('AuthnRequest is missing. Please Retry'))
+          logger.info('SAML Request absent from {}'.format(request))
+!         return render(request, 'error.html',
+                        {'exception_type': msg,
+                         'exception_msg': _('Please renew your SAML Request'),
+                         'extra_message': _not_valid_saml_msg},
+--- 37,43 ----
+          msg = _('not a valid SAMLRequest: {}').format(
+              _('AuthnRequest is missing. Please Retry'))
+          logger.info('SAML Request absent from {}'.format(request))
+!         return render(request, 'uniauth/error.html',
+                        {'exception_type': msg,
+                         'exception_msg': _('Please renew your SAML Request'),
+                         'extra_message': _not_valid_saml_msg},
+*************** def store_params_in_session(request):
+*** 44,49 ****
+--- 46,55 ----
+      request.saml_session['SAMLRequest'] = saml_request
+      request.saml_session['Binding'] = binding
+      request.saml_session['RelayState'] = passed_data.get('RelayState', '')
++     if 'SigAlg' in passed_data:
++         request.saml_session['SigAlg'] = passed_data['SigAlg']
++     if 'Signature' in passed_data:
++         request.saml_session['Signature'] = passed_data['Signature']
+  
+  
+  def store_params_in_session_func(func_to_decorate):
+*************** def store_params_in_session_func(func_to
+*** 56,62 ****
+              return func_to_decorate(*original_args, **original_kwargs)
+          except Exception as e:  # pragma: no cover
+              msg = _('not a valid SAMLRequest: {}').format(e)
+!             return render(request, 'error.html',
+                            {'exception_type': msg,
+                             'exception_msg': _('Please renew your SAML Request'),
+                             'extra_message': _not_valid_saml_msg},
+--- 62,68 ----
+              return func_to_decorate(*original_args, **original_kwargs)
+          except Exception as e:  # pragma: no cover
+              msg = _('not a valid SAMLRequest: {}').format(e)
+!             return render(request, 'uniauth/error.html',
+                            {'exception_type': msg,
+                             'exception_msg': _('Please renew your SAML Request'),
+                             'extra_message': _not_valid_saml_msg},
+*************** def require_saml_request(func_to_decorat
+*** 70,76 ****
+      def new_func(*original_args, **original_kwargs):
+          request = original_args[0]
+          if not request.saml_session.get('SAMLRequest'):
+!             return render(request, 'error.html',
+                            {'exception_type': _("You cannot access to this service directly"),
+                             'exception_msg': _('Please renew your SAML Request'),
+                             'extra_message': _not_valid_saml_msg},
+--- 76,82 ----
+      def new_func(*original_args, **original_kwargs):
+          request = original_args[0]
+          if not request.saml_session.get('SAMLRequest'):
+!             return render(request, 'uniauth/error.html',
+                            {'exception_type': _("You cannot access to this service directly"),
+                             'exception_msg': _('Please renew your SAML Request'),
+                             'extra_message': _not_valid_saml_msg},
+diff -rp -x '*pyc' -x '*pycache*' userdb/venv/lib/python3.10/site-packages/uniauth_saml2_idp/error_views.py userdb/uniauth_saml2_idp/error_views.py
+*** userdb/venv/lib/python3.10/site-packages/uniauth_saml2_idp/error_views.py	2023-03-01 13:16:52.868997474 +0200
+--- userdb/uniauth_saml2_idp/error_views.py	2023-02-27 16:25:12.136857267 +0200
+*************** class SamlIDPErrorView(TemplateView):
+*** 10,16 ****
+      """ Default error view when a 'known' error
+          occurs in the saml2 authentication views.
+      """
+!     template_name = 'error.html'
+      status = 403
+  
+      def get_context_data(self, **kwargs):
+--- 10,16 ----
+      """ Default error view when a 'known' error
+          occurs in the saml2 authentication views.
+      """
+!     template_name = 'uniauth/error.html'
+      status = 403
+  
+      def get_context_data(self, **kwargs):
+diff -rp -x '*pyc' -x '*pycache*' userdb/venv/lib/python3.10/site-packages/uniauth_saml2_idp/models.py userdb/uniauth_saml2_idp/models.py
+*** userdb/venv/lib/python3.10/site-packages/uniauth_saml2_idp/models.py	2023-03-01 13:16:52.868997474 +0200
+--- userdb/uniauth_saml2_idp/models.py	2023-02-27 16:25:12.136857267 +0200
+*************** class MetadataStore(models.Model):
+*** 286,288 ****
+--- 286,289 ----
+  
+      def __str__(self):
+          return '{} [{}]'.format(self.name, self.is_valid)
++ 
+diff -rp -x '*pyc' -x '*pycache*' userdb/venv/lib/python3.10/site-packages/uniauth_saml2_idp/processors/base.py userdb/uniauth_saml2_idp/processors/base.py
+*** userdb/venv/lib/python3.10/site-packages/uniauth_saml2_idp/processors/base.py	2023-03-01 13:16:52.872330785 +0200
+--- userdb/uniauth_saml2_idp/processors/base.py	2023-02-27 16:25:12.136857267 +0200
+*************** class BaseProcessor:
+*** 134,140 ****
+          """
+          user_field_str = sp['config'].get('nameid_field') or \
+              getattr(settings, 'SAML_IDP_DJANGO_USERNAME_FIELD', None) or \
+!             getattr(user, 'USERNAME_FIELD', 'username')
+  
+          if not hasattr(user, user_field_str):  # pragma: no cover
+              raise ValueError(
+--- 134,140 ----
+          """
+          user_field_str = sp['config'].get('nameid_field') or \
+              getattr(settings, 'SAML_IDP_DJANGO_USERNAME_FIELD', None) or \
+!             getattr(user, 'USERNAME_FIELD', 'email')
+  
+          if not hasattr(user, user_field_str):  # pragma: no cover
+              raise ValueError(
+diff -rp -x '*pyc' -x '*pycache*' userdb/venv/lib/python3.10/site-packages/uniauth_saml2_idp/views.py userdb/uniauth_saml2_idp/views.py
+*** userdb/venv/lib/python3.10/site-packages/uniauth_saml2_idp/views.py	2023-03-01 13:16:52.868997474 +0200
+--- userdb/uniauth_saml2_idp/views.py	2023-02-27 16:25:12.140190545 +0200
+*************** from saml2.saml import NAMEID_FORMAT_UNS
+*** 40,46 ****
+  from saml2.response import (IncorrectlySigned,)
+  from six import text_type
+  
+! from accounts.models import PersistentId
+  from . decorators import (_not_valid_saml_msg,
+                            store_params_in_session_func,
+                            require_saml_request)
+--- 40,46 ----
+  from saml2.response import (IncorrectlySigned,)
+  from six import text_type
+  
+! from users.models import PersistentId
+  from . decorators import (_not_valid_saml_msg,
+                            store_params_in_session_func,
+                            require_saml_request)
+*************** class SsoEntryView(View):
+*** 70,76 ****
+              self.IDP.response_args(self.saml_request.message)
+          except UnknownSystemEntity as exp:  # pragma: no cover
+              logger.error('{}'.format(exp))
+!             return render(self.request, 'error.html',
+                            {'exception_type': exp,
+                             'exception_msg': _("This SP is not registered"),
+                             'extra_message': _('Unknow Entity')},
+--- 70,76 ----
+              self.IDP.response_args(self.saml_request.message)
+          except UnknownSystemEntity as exp:  # pragma: no cover
+              logger.error('{}'.format(exp))
+!             return render(self.request, 'uniauth/error.html',
+                            {'exception_type': exp,
+                             'exception_msg': _("This SP is not registered"),
+                             'extra_message': _('Unknow Entity')},
+*************** class SsoEntryView(View):
+*** 79,85 ****
+      def is_undefined_sp(self, *args, **kwargs):
+          if settings.SAML_DISALLOW_UNDEFINED_SP:
+              if self.sp_id not in get_idp_sp_config().keys():
+!                 return render(self.request, 'error.html',
+                                {'exception_type': _("This SP is not allowed to access to this Service"),
+                                 'exception_msg': _("Attribute Processor needs "
+                                                    "to be configured and undefined SP are not Allowed.")},
+--- 79,85 ----
+      def is_undefined_sp(self, *args, **kwargs):
+          if settings.SAML_DISALLOW_UNDEFINED_SP:
+              if self.sp_id not in get_idp_sp_config().keys():
+!                 return render(self.request, 'uniauth/error.html',
+                                {'exception_type': _("This SP is not allowed to access to this Service"),
+                                 'exception_msg': _("Attribute Processor needs "
+                                                    "to be configured and undefined SP are not Allowed.")},
+*************** class SsoEntryView(View):
+*** 88,94 ****
+      def is_disabled_sp(self, *args, **kwargs):
+          # check if the SP was defined but disabled
+          if ServiceProvider.objects.filter(entity_id=self.sp_id, is_active=False):
+!             return render(self.request, 'error.html',
+                            {'exception_type': _("This SP is not allowed to access to this Service"),
+                             'exception_msg': _("{} was disabled".format(self.sp_id))},
+                            status=403)
+--- 88,94 ----
+      def is_disabled_sp(self, *args, **kwargs):
+          # check if the SP was defined but disabled
+          if ServiceProvider.objects.filter(entity_id=self.sp_id, is_active=False):
+!             return render(self.request, 'uniauth/error.html',
+                            {'exception_type': _("This SP is not allowed to access to this Service"),
+                             'exception_msg': _("{} was disabled".format(self.sp_id))},
+                            status=403)
+*************** class SsoEntryView(View):
+*** 142,148 ****
+                                                               binding)
+          except IncorrectlySigned as exp:
+              logger.error('{}'.format(exp))
+!             return render(request, 'error.html',
+                            {'exception_type': exp,
+                             'exception_msg': _("Incorrectly signed"),
+                             'extra_message': _('SP Metadata '
+--- 142,148 ----
+                                                               binding)
+          except IncorrectlySigned as exp:
+              logger.error('{}'.format(exp))
+!             return render(request, 'uniauth/error.html',
+                            {'exception_type': exp,
+                             'exception_msg': _("Incorrectly signed"),
+                             'extra_message': _('SP Metadata '
+*************** class SsoEntryView(View):
+*** 151,157 ****
+                            status=403)
+          except Exception as exp:  # pragma: no cover
+              logger.error('{}'.format(exp))
+!             return render(request, 'error.html',
+                            {'exception_type': exp},
+                            status=403)
+  
+--- 151,157 ----
+                            status=403)
+          except Exception as exp:  # pragma: no cover
+              logger.error('{}'.format(exp))
+!             return render(request, 'uniauth/error.html',
+                            {'exception_type': exp},
+                            status=403)
+  
+*************** class IdPHandlerViewMixin(ErrorHandler):
+*** 238,244 ****
+                          'extra_message': _('This is a security exception. '
+                                             'Please contact IdP staff.')}
+          if request and err_data:
+!             return render(request, 'error.html', err_data, status=403)
+          return super().dispatch(request, *args, **kwargs)
+  
+      def convert_attributes(self, attr_name_list):
+--- 238,244 ----
+                          'extra_message': _('This is a security exception. '
+                                             'Please contact IdP staff.')}
+          if request and err_data:
+!             return render(request, 'uniauth/error.html', err_data, status=403)
+          return super().dispatch(request, *args, **kwargs)
+  
+      def convert_attributes(self, attr_name_list):
+*************** class IdPHandlerViewMixin(ErrorHandler):
+*** 555,561 ****
+                  "saml_response": base64.b64encode(authn_resp.encode()).decode(),
+                  "relay_state": relay_state,
+              }
+!             template = "saml_post.html"
+              html_response = render_to_string(template, context=context,
+                                               request=request)
+  
+--- 555,561 ----
+                  "saml_response": base64.b64encode(authn_resp.encode()).decode(),
+                  "relay_state": relay_state,
+              }
+!             template = "uniauth/saml_post.html"
+              html_response = render_to_string(template, context=context,
+                                               request=request)
+  
+*************** class IdPHandlerViewMixin(ErrorHandler):
+*** 627,640 ****
+  class LoginAuthView(LoginView):
+      """ First Login Form
+      """
+!     template_name = "saml_login.html"
+      form_class = LoginForm
+  
+      def form_invalid(self, form):
+          """If the form is invalid, returns a generic message
+          status code 200 to prevent brute force attack based to response code!
+          """
+!         return render(self.request, 'error.html',
+                        {'exception_type': _("You cannot access to this service"),
+                         'exception_msg': _("Your Username or Password is invalid, "
+                                            "your account could be expired or been "
+--- 627,640 ----
+  class LoginAuthView(LoginView):
+      """ First Login Form
+      """
+!     template_name = "uniauth/saml_login.html"
+      form_class = LoginForm
+  
+      def form_invalid(self, form):
+          """If the form is invalid, returns a generic message
+          status code 200 to prevent brute force attack based to response code!
+          """
+!         return render(self.request, 'uniauth/error.html',
+                        {'exception_type': _("You cannot access to this service"),
+                         'exception_msg': _("Your Username or Password is invalid, "
+                                            "your account could be expired or been "
+*************** class LoginAuthView(LoginView):
+*** 669,675 ****
+          except Exception as e:
+              logger.error('Issue instant time comparison failed: {}'.format(e))
+          if dt_check:
+!             return render(self.request, 'error.html',
+                            {'exception_type': _("You take too long to authenticate!"),
+                             'exception_msg': _("Your request is expired"),
+                             'extra_message': _('{} minutes are passed').format(mins)},
+--- 669,675 ----
+          except Exception as e:
+              logger.error('Issue instant time comparison failed: {}'.format(e))
+          if dt_check:
+!             return render(self.request, 'uniauth/error.html',
+                            {'exception_type': _("You take too long to authenticate!"),
+                             'exception_msg': _("Your request is expired"),
+                             'extra_message': _('{} minutes are passed').format(mins)},
+*************** class UserAgreementScreen(ErrorHandler,
+*** 820,826 ****
+      """
+  
+      def get(self, request, *args, **kwargs):
+!         template = 'user_agreement.html'
+          context = dict()
+          try:
+              # prevents KeyError at /login/process_user_agreement/: 'sp_display_info'
+--- 820,826 ----
+      """
+  
+      def get(self, request, *args, **kwargs):
+!         template = 'uniauth/user_agreement.html'
+          context = dict()
+          try:
+              # prevents KeyError at /login/process_user_agreement/: 'sp_display_info'
+*************** class UserAgreementScreen(ErrorHandler,
+*** 848,854 ****
+      def post(self, request, *args, **kwargs):
+          form = AgreementForm(request.POST)
+          if not form.is_valid():
+!             return render(request, 'error.html',
+                            {'exception_type': _("Invalid submission")},
+                            status=403)
+  
+--- 848,854 ----
+      def post(self, request, *args, **kwargs):
+          form = AgreementForm(request.POST)
+          if not form.is_valid():
+!             return render(request, 'uniauth/error.html',
+                            {'exception_type': _("Invalid submission")},
+                            status=403)
+  
+*************** class UserAgreementScreen(ErrorHandler,
+*** 857,863 ****
+  
+          if not confirm:
+              logout(request)
+!             return render(request, 'error.html',
+                            {'exception_type': _(
+                                "You cannot access to this service")},
+                            status=403)
+--- 857,863 ----
+  
+          if not confirm:
+              logout(request)
+!             return render(request, 'uniauth/error.html',
+                            {'exception_type': _(
+                                "You cannot access to this service")},
+                            status=403)
+*************** class LogoutProcessView(IdPHandlerViewMi
+*** 978,987 ****
+                                                                          relay_state))
+  
+          # logout user from IDP, this won't work in crossdomains because of SameSite
+!         user = get_user_model().objects.filter(
+!             pk=request.saml_session['_auth_user_id'])
+          if user:
+!             user.first().clear_sessions()
+          else:
+              logger.warn('{}: logging out an unauthenticated user?'.format(
+                  self.__service_name))
+--- 978,989 ----
+                                                                          relay_state))
+  
+          # logout user from IDP, this won't work in crossdomains because of SameSite
+!         try:
+!             user = get_user_model().objects.get(email=request.saml_session._session_cache['identity']['email'])
+!         except:
+!             user = None
+          if user:
+!             user.clear_sessions()
+          else:
+              logger.warn('{}: logging out an unauthenticated user?'.format(
+                  self.__service_name))
