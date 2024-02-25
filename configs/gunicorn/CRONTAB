@@ -1,0 +1,3 @@
+@reboot daemon -p sso_c.pid -P sso_d.pid -o sso_daemon.log -R 2 -f /path/to/userdb/venv/bin/gunicorn -c /path/to/userdb/gunicorn/prod.py --chdir /path/to/userdb/src
+@reboot daemon -p oauth_c.pid -P oauth_d.pid -o oauth_daemon.log -R 2 -f /path/to/gitlab-oauth2-server/venv/bin/gunicorn -c /path/to/gitlab-oauth2-server/gunicorn/dev.py --chdir /path/to/gitlab-oauth2-server
+
